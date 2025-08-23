@@ -78,7 +78,7 @@ Visit `http://localhost:3030/playground` to access the playground.
 
 ```bash
 # Clone the repository
-git clone https://github.com/feathersjs-ecosystem/feathers-playground.git
+git clone https://github.com/shakhbozmn/feathers-board.git
 cd feathers-playground
 
 # Install dependencies
@@ -144,7 +144,7 @@ if (process.env.NODE_ENV === 'development') {
 For testing external APIs or when you can't modify the Feathers app:
 
 ```bash
-git clone https://github.com/feathersjs-ecosystem/feathers-playground.git
+git clone https://github.com/shakhbozmn/feathers-board.git
 cd feathers-playground
 pnpm install && pnpm build
 
@@ -246,4 +246,4 @@ MIT License - see [LICENSE](./LICENSE) file for details.
 
 ## 🐛 Issues & Support
 
-Please report issues on the [GitHub Issues](https://github.com/your-org/feathers-playground/issues) page.
+Please report issues on the [GitHub Issues](https://github.com/shakhbozmn/feathers-board.git/issues) page.

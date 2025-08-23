@@ -74,7 +74,7 @@ Run the playground as a separate application that connects to your Feathers API:
 #### 1. Clone and setup
 
 ```bash
-git clone https://github.com/feathersjs-ecosystem/feathers-playground.git
+git clone https://github.com/shakhbozmn/feathers-board.git
 cd feathers-playground
 pnpm install
 pnpm build
