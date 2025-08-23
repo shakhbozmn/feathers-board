@@ -1,97 +1,91 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.playground = playground;
 exports.extractSchema = extractSchema;
 function playground(options = {}) {
-    const config = {
-        path: '/playground',
-        exposeSchemas: true,
-        title: 'Feathers Playground',
-        description: 'API Testing Playground',
-        version: '1.0.0',
-        apiUrl: '',
-        cors: true,
-        authentication: {
-            enabled: false,
-            strategies: [],
+  const config = {
+    path: '/playground',
+    exposeSchemas: true,
+    title: 'Feathers Playground',
+    description: 'API Testing Playground',
+    version: '1.0.0',
+    apiUrl: '',
+    cors: true,
+    authentication: {
+      enabled: false,
+      strategies: [],
+    },
+    ...options,
+  };
+  return app => {
+    // Service discovery endpoint - using Feathers service pattern
+    app.use('/services', {
+      async find() {
+        const services = getServiceInfo(app, config.exposeSchemas);
+        return services;
+      },
+    });
+    // Serve playground UI (embedded mode) - using Feathers service pattern
+    if (config.path) {
+      app.use(config.path, {
+        async find() {
+          return { html: servePlaygroundUIContent(config) };
         },
-        ...options,
-    };
-    return (app) => {
-        // Service discovery endpoint - using Feathers service pattern
-        app.use('/services', {
-            async find() {
-                const services = getServiceInfo(app, config.exposeSchemas);
-                return services;
+      });
+    }
+    // Add CORS headers if enabled using hooks
+    if (config.cors) {
+      app.hooks({
+        before: {
+          all: [
+            context => {
+              if (context.params.provider && context.params.headers) {
+                context.params.headers['Access-Control-Allow-Origin'] = '*';
+                context.params.headers['Access-Control-Allow-Methods'] =
+                  'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                context.params.headers['Access-Control-Allow-Headers'] =
+                  'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+              }
+              return context;
             },
-        });
-        // Serve playground UI (embedded mode) - using Feathers service pattern
-        if (config.path) {
-            app.use(config.path, {
-                async find() {
-                    return { html: servePlaygroundUIContent(config) };
-                },
-            });
-        }
-        // Add CORS headers if enabled using hooks
-        if (config.cors) {
-            app.hooks({
-                before: {
-                    all: [
-                        (context) => {
-                            if (context.params.provider && context.params.headers) {
-                                context.params.headers['Access-Control-Allow-Origin'] = '*';
-                                context.params.headers['Access-Control-Allow-Methods'] =
-                                    'GET, POST, PUT, PATCH, DELETE, OPTIONS';
-                                context.params.headers['Access-Control-Allow-Headers'] =
-                                    'Origin, X-Requested-With, Content-Type, Accept, Authorization';
-                            }
-                            return context;
-                        },
-                    ],
-                },
-            });
-        }
-    };
+          ],
+        },
+      });
+    }
+  };
 }
 function getServiceInfo(app, exposeSchemas) {
-    const services = [];
-    // Get all registered services
-    for (const [path, service] of Object.entries(app.services)) {
-        if (path === '/services')
-            continue; // Skip our own service discovery endpoint
-        const methods = [];
-        const typedService = service;
-        // Check which methods are available
-        if (typeof typedService.find === 'function')
-            methods.push('find');
-        if (typeof typedService.get === 'function')
-            methods.push('get');
-        if (typeof typedService.create === 'function')
-            methods.push('create');
-        if (typeof typedService.patch === 'function')
-            methods.push('patch');
-        if (typeof typedService.remove === 'function')
-            methods.push('remove');
-        const serviceInfo = {
-            name: path.replace('/', ''),
-            path,
-            methods,
-        };
-        // Add schema if available and enabled
-        if (exposeSchemas && typedService.schema) {
-            serviceInfo.schema = typedService.schema;
-        }
-        // Add description if available
-        if (typedService.description) {
-            serviceInfo.description = typedService.description;
-        }
-        services.push(serviceInfo);
+  const services = [];
+  // Get all registered services
+  for (const [path, service] of Object.entries(app.services)) {
+    if (path === '/services') continue; // Skip our own service discovery endpoint
+    const methods = [];
+    const typedService = service;
+    // Check which methods are available
+    if (typeof typedService.find === 'function') methods.push('find');
+    if (typeof typedService.get === 'function') methods.push('get');
+    if (typeof typedService.create === 'function') methods.push('create');
+    if (typeof typedService.patch === 'function') methods.push('patch');
+    if (typeof typedService.remove === 'function') methods.push('remove');
+    const serviceInfo = {
+      name: path.replace('/', ''),
+      path,
+      methods,
+    };
+    // Add schema if available and enabled
+    if (exposeSchemas && typedService.schema) {
+      serviceInfo.schema = typedService.schema;
     }
-    return services;
+    // Add description if available
+    if (typedService.description) {
+      serviceInfo.description = typedService.description;
+    }
+    services.push(serviceInfo);
+  }
+  return services;
 }
 function servePlaygroundUIContent(config) {
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -157,11 +151,11 @@ function servePlaygroundUIContent(config) {
 }
 // Utility function to extract schema from Zod or other validation libraries
 function extractSchema(validator) {
-    // This would be implemented to extract JSON schema from various validation libraries
-    // For now, return a basic schema structure
-    if (validator && typeof validator === 'object') {
-        return validator;
-    }
-    return null;
+  // This would be implemented to extract JSON schema from various validation libraries
+  // For now, return a basic schema structure
+  if (validator && typeof validator === 'object') {
+    return validator;
+  }
+  return null;
 }
 exports.default = playground;

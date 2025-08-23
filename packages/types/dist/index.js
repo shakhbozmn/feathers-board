@@ -3,7 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlaygroundConfigSchema = exports.ApiRequestSchema = exports.ServiceInfoSchema = exports.ServiceMethodSchema = void 0;
 const zod_1 = require("zod");
 // Zod schemas for validation
-exports.ServiceMethodSchema = zod_1.z.enum(['find', 'get', 'create', 'patch', 'remove']);
+exports.ServiceMethodSchema = zod_1.z.enum([
+    'find',
+    'get',
+    'create',
+    'patch',
+    'remove',
+]);
 exports.ServiceInfoSchema = zod_1.z.object({
     name: zod_1.z.string(),
     path: zod_1.z.string(),
@@ -27,8 +33,10 @@ exports.PlaygroundConfigSchema = zod_1.z.object({
     version: zod_1.z.string().optional(),
     apiUrl: zod_1.z.string().optional(),
     cors: zod_1.z.boolean().optional(),
-    authentication: zod_1.z.object({
+    authentication: zod_1.z
+        .object({
         enabled: zod_1.z.boolean(),
         strategies: zod_1.z.array(zod_1.z.string()).optional(),
-    }).optional(),
+    })
+        .optional(),
 });

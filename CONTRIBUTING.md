@@ -13,17 +13,20 @@ Thank you for your interest in contributing to Feathers Playground! This documen
 ### Development Setup
 
 1. **Fork and clone the repository**
+
    ```bash
    git clone https://github.com/your-username/feathers-playground.git
    cd feathers-playground
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 3. **Build packages**
+
    ```bash
    pnpm build
    ```
@@ -120,15 +123,16 @@ pnpm test:coverage
 - Follow the AAA pattern: Arrange, Act, Assert
 
 Example:
+
 ```typescript
 describe('ApiClient', () => {
   it('should fetch services successfully', async () => {
     // Arrange
     const client = new ApiClient('http://localhost:3030');
-    
+
     // Act
     const services = await client.getServices();
-    
+
     // Assert
     expect(services).toBeInstanceOf(Array);
   });
@@ -209,6 +213,7 @@ When requesting features, please include:
 ## 📋 Pull Request Process
 
 1. **Create a feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -219,6 +224,7 @@ When requesting features, please include:
    - Update documentation if needed
 
 3. **Test your changes**
+
    ```bash
    pnpm test
    pnpm lint
@@ -226,6 +232,7 @@ When requesting features, please include:
    ```
 
 4. **Commit your changes**
+
    ```bash
    git add .
    git commit -m "feat: add new feature description"
@@ -241,6 +248,7 @@ When requesting features, please include:
    - `chore:` for maintenance tasks
 
 5. **Push and create PR**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -254,12 +262,14 @@ When requesting features, please include:
 ## 🔍 Code Review Guidelines
 
 ### For Authors
+
 - Keep PRs focused and reasonably sized
 - Write clear commit messages
 - Add tests for new functionality
 - Update documentation as needed
 
 ### For Reviewers
+
 - Be constructive and respectful
 - Focus on code quality, not personal preferences
 - Suggest improvements with explanations

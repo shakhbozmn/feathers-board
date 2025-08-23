@@ -1,6 +1,7 @@
 # Feathers Playground 🪶✨
 
 A **Swagger UI + Postman–like playground for Feathers v5**. This tool allows developers to:
+
 - Visualize Feathers services & schemas
 - Test API requests directly from the browser
 - Use in **embedded mode** (inside their Feathers app) or **standalone mode**
@@ -8,18 +9,21 @@ A **Swagger UI + Postman–like playground for Feathers v5**. This tool allows d
 ## 🎯 Features
 
 ### Service Discovery
+
 - Backend exposes `/services` endpoint listing:
   - Service name and path
   - Supported methods (find, get, create, patch, remove)
   - JSON schema (if available)
 
 ### Request Playground
+
 - **Sidebar**: List all services with method indicators
 - **Schema viewer**: Shows JSON schema for selected service
 - **Request builder**: Dynamic form for query/body, headers, auth token
 - **Response viewer**: Pretty JSON with syntax highlighting
 
 ### Modes
+
 - **Embedded**: `app.configure(playground({ path: '/playground' }))` mounts UI inside Feathers app
 - **Standalone**: Run Next.js app separately, point it to any Feathers API URL
 
@@ -60,10 +64,12 @@ npm install feathers-playground
 import { playground } from 'feathers-playground';
 
 // Add to your Feathers app
-app.configure(playground({
-  path: '/playground',
-  title: 'My API Playground'
-}));
+app.configure(
+  playground({
+    path: '/playground',
+    title: 'My API Playground',
+  })
+);
 ```
 
 Visit `http://localhost:3030/playground` to access the playground.
@@ -107,12 +113,14 @@ app.use('/users', new UsersService());
 app.use('/posts', new PostsService());
 
 // Add playground
-app.configure(playground({
-  path: '/api-playground',
-  title: 'My Blog API',
-  description: 'Test the blog API endpoints',
-  exposeSchemas: true
-}));
+app.configure(
+  playground({
+    path: '/api-playground',
+    title: 'My Blog API',
+    description: 'Test the blog API endpoints',
+    exposeSchemas: true,
+  })
+);
 
 app.listen(3030);
 ```
@@ -122,10 +130,12 @@ app.listen(3030);
 ```typescript
 // Only enable in development
 if (process.env.NODE_ENV === 'development') {
-  app.configure(playground({
-    path: '/playground',
-    title: 'Development API Playground'
-  }));
+  app.configure(
+    playground({
+      path: '/playground',
+      title: 'Development API Playground',
+    })
+  );
 }
 ```
 
@@ -198,11 +208,11 @@ feathers-playground/
 
 ```typescript
 interface PlaygroundConfig {
-  path?: string;           // Mount path (default: '/playground')
+  path?: string; // Mount path (default: '/playground')
   exposeSchemas?: boolean; // Include schemas in discovery (default: true)
-  title?: string;          // Playground title
-  description?: string;    // Playground description
-  cors?: boolean;          // Enable CORS (default: true)
+  title?: string; // Playground title
+  description?: string; // Playground description
+  cors?: boolean; // Enable CORS (default: true)
 }
 ```
 

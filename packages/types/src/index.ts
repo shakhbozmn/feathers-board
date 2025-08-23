@@ -82,7 +82,13 @@ export interface RequestFormData {
 }
 
 // Zod schemas for validation
-export const ServiceMethodSchema = z.enum(['find', 'get', 'create', 'patch', 'remove']);
+export const ServiceMethodSchema = z.enum([
+  'find',
+  'get',
+  'create',
+  'patch',
+  'remove',
+]);
 
 export const ServiceInfoSchema = z.object({
   name: z.string(),
@@ -109,9 +115,10 @@ export const PlaygroundConfigSchema = z.object({
   version: z.string().optional(),
   apiUrl: z.string().optional(),
   cors: z.boolean().optional(),
-  authentication: z.object({
-    enabled: z.boolean(),
-    strategies: z.array(z.string()).optional(),
-  }).optional(),
+  authentication: z
+    .object({
+      enabled: z.boolean(),
+      strategies: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
-

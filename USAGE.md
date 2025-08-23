@@ -46,13 +46,15 @@ app.configure(rest());
 // app.use('/messages', new MessagesService());
 
 // Add the playground (should be after services are configured)
-app.configure(playground({
-  path: '/playground',           // Mount path (default: '/playground')
-  exposeSchemas: true,          // Include JSON schemas (default: true)
-  title: 'My API Playground',   // Custom title
-  description: 'Test my API',   // Custom description
-  cors: true                    // Enable CORS (default: true)
-}));
+app.configure(
+  playground({
+    path: '/playground', // Mount path (default: '/playground')
+    exposeSchemas: true, // Include JSON schemas (default: true)
+    title: 'My API Playground', // Custom title
+    description: 'Test my API', // Custom description
+    cors: true, // Enable CORS (default: true)
+  })
+);
 
 const PORT = process.env.PORT || 3030;
 app.listen(PORT).then(() => {
@@ -99,12 +101,13 @@ Visit `http://localhost:3000` to access the standalone playground.
 
 ```typescript
 interface PlaygroundConfig {
-  path?: string;           // Mount path (default: '/playground')
+  path?: string; // Mount path (default: '/playground')
   exposeSchemas?: boolean; // Include schemas in discovery (default: true)
-  title?: string;          // Playground title
-  description?: string;    // Playground description
-  cors?: boolean;          // Enable CORS (default: true)
-  authentication?: {       // Auth configuration
+  title?: string; // Playground title
+  description?: string; // Playground description
+  cors?: boolean; // Enable CORS (default: true)
+  authentication?: {
+    // Auth configuration
     enabled: boolean;
     strategies?: string[];
   };
@@ -139,9 +142,9 @@ const service = new UsersService();
     id: { type: 'number', description: 'Unique identifier' },
     email: { type: 'string', format: 'email', description: 'User email' },
     name: { type: 'string', description: 'User full name' },
-    createdAt: { type: 'string', format: 'date-time' }
+    createdAt: { type: 'string', format: 'date-time' },
   },
-  required: ['email', 'name']
+  required: ['email', 'name'],
 };
 (service as any).description = 'User management service';
 
@@ -170,11 +173,13 @@ app.use('/comments', new CommentsService());
 app.use('/users', new UsersService());
 
 // Add playground
-app.configure(playground({
-  path: '/api-playground',
-  title: 'Blog API Playground',
-  description: 'Test the blog API endpoints'
-}));
+app.configure(
+  playground({
+    path: '/api-playground',
+    title: 'Blog API Playground',
+    description: 'Test the blog API endpoints',
+  })
+);
 
 app.listen(3030);
 ```
@@ -201,15 +206,17 @@ app.use('/orders', new OrdersService());
 app.use('/customers', new CustomersService());
 
 // Add playground with auth info
-app.configure(playground({
-  path: '/dev-playground',
-  title: 'E-commerce API',
-  description: 'Internal API testing playground',
-  authentication: {
-    enabled: true,
-    strategies: ['jwt', 'local']
-  }
-}));
+app.configure(
+  playground({
+    path: '/dev-playground',
+    title: 'E-commerce API',
+    description: 'Internal API testing playground',
+    authentication: {
+      enabled: true,
+      strategies: ['jwt', 'local'],
+    },
+  })
+);
 
 app.listen(3030);
 ```
@@ -235,31 +242,33 @@ const notificationsService = new NotificationsService();
   properties: {
     id: { type: 'string', description: 'Notification ID' },
     userId: { type: 'string', description: 'Target user ID' },
-    type: { 
-      type: 'string', 
+    type: {
+      type: 'string',
       enum: ['email', 'sms', 'push'],
-      description: 'Notification type'
+      description: 'Notification type',
     },
     message: { type: 'string', description: 'Notification content' },
     status: {
       type: 'string',
       enum: ['pending', 'sent', 'failed'],
-      description: 'Delivery status'
+      description: 'Delivery status',
     },
     createdAt: { type: 'string', format: 'date-time' },
-    sentAt: { type: 'string', format: 'date-time' }
+    sentAt: { type: 'string', format: 'date-time' },
   },
-  required: ['userId', 'type', 'message']
+  required: ['userId', 'type', 'message'],
 };
 (notificationsService as any).description = 'Send and track notifications';
 
 app.use('/notifications', notificationsService);
 
-app.configure(playground({
-  path: '/playground',
-  title: 'Notifications Service',
-  exposeSchemas: true
-}));
+app.configure(
+  playground({
+    path: '/playground',
+    title: 'Notifications Service',
+    exposeSchemas: true,
+  })
+);
 
 app.listen(3030);
 ```
@@ -311,10 +320,12 @@ For production deployments:
 ```typescript
 // Only enable playground in development
 if (process.env.NODE_ENV === 'development') {
-  app.configure(playground({
-    path: '/playground',
-    title: 'Development API Playground'
-  }));
+  app.configure(
+    playground({
+      path: '/playground',
+      title: 'Development API Playground',
+    })
+  );
 }
 ```
 
