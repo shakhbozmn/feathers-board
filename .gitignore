@@ -6,6 +6,8 @@ node_modules/
 # Production builds
 .next/
 dist/
+# But keep package dist folders for TypeScript project references
+!packages/*/dist/
 
 # Turbo
 .turbo/
