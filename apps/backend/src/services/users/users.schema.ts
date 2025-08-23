@@ -29,11 +29,23 @@ export const userJsonSchema: JSONSchema = {
   type: 'object',
   properties: {
     id: { type: 'number', description: 'Unique identifier' },
-    email: { type: 'string', format: 'email', description: 'User email address' },
+    email: {
+      type: 'string',
+      format: 'email',
+      description: 'User email address',
+    },
     name: { type: 'string', minLength: 1, description: 'User full name' },
     avatar: { type: 'string', format: 'uri', description: 'Avatar image URL' },
-    createdAt: { type: 'string', format: 'date-time', description: 'Creation timestamp' },
-    updatedAt: { type: 'string', format: 'date-time', description: 'Last update timestamp' },
+    createdAt: {
+      type: 'string',
+      format: 'date-time',
+      description: 'Creation timestamp',
+    },
+    updatedAt: {
+      type: 'string',
+      format: 'date-time',
+      description: 'Last update timestamp',
+    },
   },
   required: ['email', 'name'],
   additionalProperties: false,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Id, NullableId, Paginated, Params } from '@feathersjs/feathers';
 import { Message, MessageData, MessageQuery } from './messages.schema';
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Id, NullableId, Paginated, Params } from '@feathersjs/feathers';
 import { User, UserData, UserQuery } from './users.schema';
 

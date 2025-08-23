@@ -29,9 +29,20 @@ export const messageJsonSchema: JSONSchema = {
   properties: {
     id: { type: 'number', description: 'Unique identifier' },
     text: { type: 'string', minLength: 1, description: 'Message content' },
-    userId: { type: 'number', description: 'ID of the user who created the message' },
-    createdAt: { type: 'string', format: 'date-time', description: 'Creation timestamp' },
-    updatedAt: { type: 'string', format: 'date-time', description: 'Last update timestamp' },
+    userId: {
+      type: 'number',
+      description: 'ID of the user who created the message',
+    },
+    createdAt: {
+      type: 'string',
+      format: 'date-time',
+      description: 'Creation timestamp',
+    },
+    updatedAt: {
+      type: 'string',
+      format: 'date-time',
+      description: 'Last update timestamp',
+    },
   },
   required: ['text', 'userId'],
   additionalProperties: false,

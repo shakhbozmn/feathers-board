@@ -29,7 +29,7 @@ app.set('public', './public');
 // Only serve static files if the directory exists, otherwise skip
 try {
   app.use('/', serveStatic('./public'));
-} catch (error) {
+} catch {
   console.log('No public directory found, skipping static file serving');
 }
 
