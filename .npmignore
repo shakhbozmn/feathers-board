@@ -1,0 +1,29 @@
+# Development files
+.github/
+.vscode/
+*.log
+*.tgz
+
+# Source files (we publish built files)
+apps/
+packages/*/src/
+packages/*/test/
+packages/*/*.test.ts
+packages/*/*.spec.ts
+
+# Build artifacts that shouldn't be published
+.next/
+dist/
+node_modules/
+coverage/
+
+# Config files
+.eslintrc.js
+.prettierrc
+turbo.json
+pnpm-workspace.yaml
+tsconfig.json
+
+# Documentation (keep README and LICENSE)
+CONTRIBUTING.md
+project_spec.md

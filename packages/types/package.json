@@ -1,0 +1,54 @@
+{
+  "name": "@feathers-playground/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for Feathers Playground",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "feathers",
+    "feathersjs",
+    "types",
+    "typescript",
+    "api",
+    "playground"
+  ],
+  "author": "Feathers Playground Team",
+  "license": "MIT",
+  "homepage": "https://github.com/feathersjs-ecosystem/feathers-playground#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/feathersjs-ecosystem/feathers-playground.git"
+  },
+  "bugs": {
+    "url": "https://github.com/feathersjs-ecosystem/feathers-playground/issues"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
