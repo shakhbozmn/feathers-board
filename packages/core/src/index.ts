@@ -1,16 +1,18 @@
-import {
-  PlaygroundConfig,
-  ServiceInfo,
-  ServiceMethod,
-} from '@feathers-playground/types';
+import { ServiceInfo, ServiceMethod } from '@feathers-playground/types';
 import { Application } from '@feathersjs/feathers';
 
-export interface PlaygroundOptions extends PlaygroundConfig {
+export interface PlaygroundOptions {
   path?: string;
   exposeSchemas?: boolean;
   title?: string;
   description?: string;
   version?: string;
+  apiUrl?: string;
+  cors?: boolean;
+  authentication?: {
+    enabled: boolean;
+    strategies?: string[];
+  };
 }
 
 export function playground(options: PlaygroundOptions = {}) {

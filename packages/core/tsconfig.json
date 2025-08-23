@@ -1,12 +1,26 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
     "emitDeclarationOnly": false,
     "noEmit": false,
-    "composite": true
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@feathers-playground/types": ["../types/src"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"],
