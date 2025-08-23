@@ -13,9 +13,9 @@ packages/*/*.spec.ts
 
 # Build artifacts that shouldn't be published
 .next/
-dist/
 node_modules/
 coverage/
+*.tsbuildinfo
 
 # Config files
 .eslintrc.js
