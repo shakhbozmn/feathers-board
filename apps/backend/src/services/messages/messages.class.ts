@@ -1,4 +1,4 @@
-import { Id, NullableId, Paginated, Params, ServiceMethods } from '@feathersjs/feathers';
+import { Id, NullableId, Paginated, Params } from '@feathersjs/feathers';
 import { Message, MessageData, MessageQuery } from './messages.schema';
 
 // In-memory data store for demo purposes
@@ -39,14 +39,14 @@ export interface MessagesParams extends Params {
   query?: MessageQuery;
 }
 
-export class MessagesService implements ServiceMethods<Message> {
+export class MessagesService {
   async find(params?: MessagesParams): Promise<Message[] | Paginated<Message>> {
     const { query = {} } = params || {};
     let result = [...messages];
 
     // Filter by text
     if (query.text) {
-      result = result.filter(message => 
+      result = result.filter(message =>
         message.text.toLowerCase().includes(query.text!.toLowerCase())
       );
     }
@@ -63,8 +63,10 @@ export class MessagesService implements ServiceMethods<Message> {
       result.sort((a, b) => {
         const aVal = a[sortKey];
         const bVal = b[sortKey];
-        if (aVal < bVal) return sortOrder === 1 ? -1 : 1;
-        if (aVal > bVal) return sortOrder === 1 ? 1 : -1;
+        if (aVal !== undefined && bVal !== undefined) {
+          if (aVal < bVal) return sortOrder === 1 ? -1 : 1;
+          if (aVal > bVal) return sortOrder === 1 ? 1 : -1;
+        }
         return 0;
       });
     }
@@ -73,7 +75,7 @@ export class MessagesService implements ServiceMethods<Message> {
     const skip = query.$skip || 0;
     const limit = query.$limit || result.length;
     const total = result.length;
-    
+
     result = result.slice(skip, skip + limit);
 
     return {
@@ -95,7 +97,8 @@ export class MessagesService implements ServiceMethods<Message> {
   async create(data: MessageData, params?: MessagesParams): Promise<Message> {
     const message: Message = {
       id: nextId++,
-      ...data,
+      text: data.text || '',
+      userId: data.userId || 0,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -103,7 +106,11 @@ export class MessagesService implements ServiceMethods<Message> {
     return message;
   }
 
-  async patch(id: NullableId, data: MessageData, params?: MessagesParams): Promise<Message> {
+  async patch(
+    id: NullableId,
+    data: MessageData,
+    params?: MessagesParams
+  ): Promise<Message> {
     if (id === null) {
       throw new Error('Bulk patch not supported');
     }

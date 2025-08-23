@@ -56,13 +56,16 @@ export function ServicesSidebar({
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-2">
-        {services?.map((service) => (
+        {services?.map((service: ServiceInfo) => (
           <Button
             key={service.name}
-            variant={selectedService?.name === service.name ? 'default' : 'ghost'}
+            variant={
+              selectedService?.name === service.name ? 'default' : 'ghost'
+            }
             className={cn(
               'w-full justify-start h-auto p-3 text-left',
-              selectedService?.name === service.name && 'bg-primary text-primary-foreground'
+              selectedService?.name === service.name &&
+                'bg-primary text-primary-foreground'
             )}
             onClick={() => onServiceSelect(service)}
           >
@@ -70,7 +73,7 @@ export function ServicesSidebar({
               <div className="font-medium">{service.name}</div>
               <div className="text-xs opacity-70">{service.path}</div>
               <div className="flex flex-wrap gap-1 mt-1">
-                {service.methods.map((method) => (
+                {service.methods.map((method: string) => (
                   <span
                     key={method}
                     className={cn(

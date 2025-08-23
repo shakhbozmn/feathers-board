@@ -1,11 +1,20 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { apiClient } from '@/lib/api-client';
-import { isValidJson, parseJson } from '@/lib/utils';
-import { ApiRequest, ServiceInfo, ServiceMethod } from '@feathers-playground/types';
+import {
+  ApiRequest,
+  ServiceInfo,
+  ServiceMethod,
+} from '@feathers-playground/types';
 import { useState } from 'react';
+import { Button } from '../components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../components/ui/card';
+import { apiClient } from '../lib/api-client';
+import { isValidJson, parseJson } from '../lib/utils';
 
 interface RequestBuilderProps {
   service: ServiceInfo | null;
@@ -30,7 +39,7 @@ export function RequestBuilder({
     if (!service) return;
 
     onLoadingChange(true);
-    
+
     try {
       const request: ApiRequest = {
         method: selectedMethod,
@@ -86,7 +95,7 @@ export function RequestBuilder({
           <div>
             <label className="block text-sm font-medium mb-2">Method</label>
             <div className="flex flex-wrap gap-2">
-              {service.methods.map((method) => (
+              {service.methods.map(method => (
                 <Button
                   key={method}
                   variant={selectedMethod === method ? 'default' : 'outline'}
@@ -106,7 +115,7 @@ export function RequestBuilder({
               <input
                 type="text"
                 value={idInput}
-                onChange={(e) => setIdInput(e.target.value)}
+                onChange={e => setIdInput((e.target as HTMLInputElement).value)}
                 placeholder="Enter ID"
                 className="w-full p-2 border border-input rounded-md bg-background"
               />
@@ -115,10 +124,14 @@ export function RequestBuilder({
 
           {/* Query Parameters */}
           <div>
-            <label className="block text-sm font-medium mb-2">Query Parameters (JSON)</label>
+            <label className="block text-sm font-medium mb-2">
+              Query Parameters (JSON)
+            </label>
             <textarea
               value={queryInput}
-              onChange={(e) => setQueryInput(e.target.value)}
+              onChange={e =>
+                setQueryInput((e.target as HTMLTextAreaElement).value)
+              }
               placeholder='{"$limit": 10, "$skip": 0}'
               className="w-full h-24 p-2 border border-input rounded-md bg-background font-mono text-sm"
             />
@@ -127,10 +140,14 @@ export function RequestBuilder({
           {/* Request Body for create, patch */}
           {['create', 'patch'].includes(selectedMethod) && (
             <div>
-              <label className="block text-sm font-medium mb-2">Request Body (JSON)</label>
+              <label className="block text-sm font-medium mb-2">
+                Request Body (JSON)
+              </label>
               <textarea
                 value={dataInput}
-                onChange={(e) => setDataInput(e.target.value)}
+                onChange={e =>
+                  setDataInput((e.target as HTMLTextAreaElement).value)
+                }
                 placeholder='{"name": "John Doe", "email": "john@example.com"}'
                 className="w-full h-32 p-2 border border-input rounded-md bg-background font-mono text-sm"
               />
@@ -139,21 +156,21 @@ export function RequestBuilder({
 
           {/* Headers */}
           <div>
-            <label className="block text-sm font-medium mb-2">Headers (JSON)</label>
+            <label className="block text-sm font-medium mb-2">
+              Headers (JSON)
+            </label>
             <textarea
               value={headersInput}
-              onChange={(e) => setHeadersInput(e.target.value)}
+              onChange={e =>
+                setHeadersInput((e.target as HTMLTextAreaElement).value)
+              }
               placeholder='{"Authorization": "Bearer token"}'
               className="w-full h-20 p-2 border border-input rounded-md bg-background font-mono text-sm"
             />
           </div>
 
           {/* Send Button */}
-          <Button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full"
-          >
+          <Button onClick={handleSubmit} disabled={loading} className="w-full">
             {loading ? 'Sending...' : 'Send Request'}
           </Button>
         </CardContent>

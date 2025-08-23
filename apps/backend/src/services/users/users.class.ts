@@ -1,4 +1,4 @@
-import { Id, NullableId, Paginated, Params, ServiceMethods } from '@feathersjs/feathers';
+import { Id, NullableId, Paginated, Params } from '@feathersjs/feathers';
 import { User, UserData, UserQuery } from './users.schema';
 
 // In-memory data store for demo purposes
@@ -35,21 +35,21 @@ export interface UsersParams extends Params {
   query?: UserQuery;
 }
 
-export class UsersService implements ServiceMethods<User> {
+export class UsersService {
   async find(params?: UsersParams): Promise<User[] | Paginated<User>> {
     const { query = {} } = params || {};
     let result = [...users];
 
     // Filter by email
     if (query.email) {
-      result = result.filter(user => 
+      result = result.filter(user =>
         user.email.toLowerCase().includes(query.email!.toLowerCase())
       );
     }
 
     // Filter by name
     if (query.name) {
-      result = result.filter(user => 
+      result = result.filter(user =>
         user.name.toLowerCase().includes(query.name!.toLowerCase())
       );
     }
@@ -61,8 +61,10 @@ export class UsersService implements ServiceMethods<User> {
       result.sort((a, b) => {
         const aVal = a[sortKey];
         const bVal = b[sortKey];
-        if (aVal < bVal) return sortOrder === 1 ? -1 : 1;
-        if (aVal > bVal) return sortOrder === 1 ? 1 : -1;
+        if (aVal !== undefined && bVal !== undefined) {
+          if (aVal < bVal) return sortOrder === 1 ? -1 : 1;
+          if (aVal > bVal) return sortOrder === 1 ? 1 : -1;
+        }
         return 0;
       });
     }
@@ -71,7 +73,7 @@ export class UsersService implements ServiceMethods<User> {
     const skip = query.$skip || 0;
     const limit = query.$limit || result.length;
     const total = result.length;
-    
+
     result = result.slice(skip, skip + limit);
 
     return {
@@ -93,7 +95,9 @@ export class UsersService implements ServiceMethods<User> {
   async create(data: UserData, params?: UsersParams): Promise<User> {
     const user: User = {
       id: nextId++,
-      ...data,
+      email: data.email || '',
+      name: data.name || '',
+      avatar: data.avatar || '',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -101,7 +105,11 @@ export class UsersService implements ServiceMethods<User> {
     return user;
   }
 
-  async patch(id: NullableId, data: UserData, params?: UsersParams): Promise<User> {
+  async patch(
+    id: NullableId,
+    data: UserData,
+    params?: UsersParams
+  ): Promise<User> {
     if (id === null) {
       throw new Error('Bulk patch not supported');
     }

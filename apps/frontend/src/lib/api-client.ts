@@ -1,9 +1,9 @@
 import {
-    ApiError,
-    ApiRequest,
-    ApiResponse,
-    ServiceInfo,
-    ServiceMethod,
+  ApiError,
+  ApiRequest,
+  ApiResponse,
+  ServiceInfo,
+  ServiceMethod,
 } from '@feathers-playground/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030';
@@ -20,14 +20,14 @@ export class ApiClient {
     if (!response.ok) {
       throw new Error(`Failed to fetch services: ${response.statusText}`);
     }
-    return response.json();
+    return response.json() as Promise<ServiceInfo[]>;
   }
 
   async makeRequest(request: ApiRequest): Promise<ApiResponse> {
     const { method, servicePath, query, data, headers = {}, id } = request;
 
-    let url = `${this.baseUrl}${servicePath}`;
-    
+    let url = `${this.baseUrl}${servicePath.startsWith('/') ? servicePath : '/' + servicePath}`;
+
     // Add ID to URL for get, patch, remove methods
     if (id && ['get', 'patch', 'remove'].includes(method)) {
       url += `/${id}`;
@@ -61,9 +61,9 @@ export class ApiClient {
 
     try {
       const response = await fetch(url, requestOptions);
-      
+
       const responseData = await response.json().catch(() => null);
-      
+
       const apiResponse: ApiResponse = {
         data: responseData,
         status: response.status,
@@ -72,12 +72,13 @@ export class ApiClient {
       };
 
       if (!response.ok) {
+        const errorData = responseData as any;
         const error: ApiError = {
-          message: responseData?.message || response.statusText,
-          code: responseData?.code || response.status,
-          className: responseData?.className,
-          data: responseData?.data,
-          errors: responseData?.errors,
+          message: errorData?.message || response.statusText,
+          code: errorData?.code || response.status,
+          className: errorData?.className,
+          data: errorData?.data,
+          errors: errorData?.errors,
         };
         throw error;
       }
@@ -87,7 +88,7 @@ export class ApiClient {
       if (error instanceof Error && 'code' in error) {
         throw error; // Re-throw API errors
       }
-      
+
       // Handle network errors
       throw {
         message: error instanceof Error ? error.message : 'Network error',

@@ -18,27 +18,28 @@
   ],
   "author": "Feathers Playground Team",
   "license": "MIT",
-  "homepage": "https://github.com/feathersjs-ecosystem/feathers-playground#readme",
+  "homepage": "https://github.com/shakhbozmn/feathers-board#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/feathersjs-ecosystem/feathers-playground.git"
+    "url": "https://github.com/shakhbozmn/feathers-board.git"
   },
   "bugs": {
-    "url": "https://github.com/feathersjs-ecosystem/feathers-playground/issues"
+    "url": "https://github.com/shakhbozmn/feathers-board/issues"
   },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint src --ext .ts --fix",
+    "test": "echo 'No tests yet'",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@feathers-playground/types": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.3.0",
+    "typescript": "^5.6.0",
     "@types/express": "^4.17.21"
   },
   "peerDependencies": {
@@ -58,6 +59,6 @@
     "LICENSE"
   ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   }
 }

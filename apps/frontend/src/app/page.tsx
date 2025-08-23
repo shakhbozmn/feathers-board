@@ -1,14 +1,16 @@
 'use client';
 
-import { RequestBuilder } from '@/components/request-builder';
 import { ResponseViewer } from '@/components/response-viewer';
 import { SchemaViewer } from '@/components/schema-viewer';
 import { ServicesSidebar } from '@/components/services-sidebar';
 import { ServiceInfo } from '@feathers-playground/types';
 import { useState } from 'react';
+import { RequestBuilder } from '../components/request-builder';
 
 export default function PlaygroundPage() {
-  const [selectedService, setSelectedService] = useState<ServiceInfo | null>(null);
+  const [selectedService, setSelectedService] = useState<ServiceInfo | null>(
+    null
+  );
   const [response, setResponse] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +40,9 @@ export default function PlaygroundPage() {
             </div>
             <div className="flex items-center space-x-2">
               <div className="text-xs text-muted-foreground">
-                {selectedService ? `${selectedService.name} service` : 'Select a service'}
+                {selectedService
+                  ? `${selectedService.name} service`
+                  : 'Select a service'}
               </div>
             </div>
           </div>

@@ -1,7 +1,15 @@
-import { playground } from '@feathers-playground/core';
-import express, { cors, errorHandler, json, notFound, rest, serveStatic, urlencoded } from '@feathersjs/express';
+import express, {
+  cors,
+  errorHandler,
+  json,
+  notFound,
+  rest,
+  serveStatic,
+  urlencoded,
+} from '@feathersjs/express';
 import { feathers } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
+import { playground } from 'feathers-playground';
 
 import { channels } from './channels';
 import { services } from './services';
@@ -16,16 +24,24 @@ app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
-// Host the public folder
-app.use('/', serveStatic(app.get('public')));
+// Set public directory and host the public folder
+app.set('public', './public');
+// Only serve static files if the directory exists, otherwise skip
+try {
+  app.use('/', serveStatic('./public'));
+} catch (error) {
+  console.log('No public directory found, skipping static file serving');
+}
 
 // Configure services and real-time functionality
 app.configure(rest());
-app.configure(socketio({
-  cors: {
-    origin: app.get('origins')
-  }
-}));
+app.configure(
+  socketio({
+    cors: {
+      origin: app.get('origins'),
+    },
+  })
+);
 
 // Configure services
 app.configure(services);
@@ -34,14 +50,16 @@ app.configure(services);
 app.configure(channels);
 
 // Configure playground (embedded mode)
-app.configure(playground({
-  path: '/playground',
-  exposeSchemas: true,
-  title: 'Feathers Playground Demo',
-  description: 'API Testing Playground for Feathers Services',
-  version: '1.0.0',
-  cors: true
-}));
+app.configure(
+  playground({
+    path: '/playground',
+    exposeSchemas: true,
+    title: 'Feathers Playground Demo',
+    description: 'API Testing Playground for Feathers Services',
+    version: '1.0.0',
+    cors: true,
+  })
+);
 
 // Configure a middleware for 404s and the error handler
 app.use(notFound());
@@ -49,11 +67,11 @@ app.use(errorHandler());
 
 app.hooks({
   around: {
-    all: []
+    all: [],
   },
   before: {},
   after: {},
-  error: {}
+  error: {},
 });
 
 // Start the server
