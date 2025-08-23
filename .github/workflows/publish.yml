@@ -14,32 +14,32 @@ jobs:
   publish:
     name: Publish to NPM
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-          
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
-          
+
       - name: Install dependencies
         run: pnpm install
-        
+
       - name: Build packages
         run: pnpm build
-        
+
       - name: Run tests
         run: pnpm test
-        
+
       - name: Update version (if manual trigger)
         if: github.event_name == 'workflow_dispatch'
         run: |
@@ -48,35 +48,31 @@ jobs:
           npm version ${{ github.event.inputs.version }} --no-git-tag-version
           cd ../types
           npm version ${{ github.event.inputs.version }} --no-git-tag-version
-        
+
       - name: Publish @feathers-playground/types
         run: |
           cd packages/types
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          
+
       - name: Publish feathers-playground
         run: |
           cd packages/core
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          
+
       - name: Create GitHub Release (if manual trigger)
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/create-release@v1
+        run: |
+          gh release create v${{ github.event.inputs.version }} \
+            --title "Release v${{ github.event.inputs.version }}" \
+            --notes "## Changes
+          - Updated to version ${{ github.event.inputs.version }}
+
+          ## NPM Packages
+          - \`feathers-playground@${{ github.event.inputs.version }}\`
+          - \`@feathers-playground/types@${{ github.event.inputs.version }}\`"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ github.event.inputs.version }}
-          release_name: Release v${{ github.event.inputs.version }}
-          body: |
-            ## Changes
-            - Updated to version ${{ github.event.inputs.version }}
-            
-            ## NPM Packages
-            - `feathers-playground@${{ github.event.inputs.version }}`
-            - `@feathers-playground/types@${{ github.event.inputs.version }}`
-          draft: false
-          prerelease: false
