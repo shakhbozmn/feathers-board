@@ -4,10 +4,6 @@ on:
   release:
     types: [published]
 
-concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
   publish:
     name: Publish to NPM
@@ -53,6 +49,15 @@ jobs:
 
       - name: Sync versions across all packages
         run: pnpm sync-versions
+
+      - name: Sync README and LICENSE files from root
+        run: |
+          # Copy root README.md and LICENSE to all package directories to ensure NPM displays the latest GitHub files
+          cp README.md packages/core/README.md
+          cp README.md packages/types/README.md
+          cp LICENSE packages/core/LICENSE
+          cp LICENSE packages/types/LICENSE
+          echo "✅ Synced README and LICENSE files to all packages"
 
       - name: Publish @feathers-playground/types
         run: |
