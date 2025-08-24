@@ -1,7 +1,7 @@
 {
   "name": "feathers-playground",
-  "version": "1.0.0",
-  "description": "A Swagger UI + Postman-like playground for Feathers v5 - Core integration package",
+  "version": "1.0.1",
+  "description": "Interactive API playground and testing environment for FeathersJS v5 applications - Core integration package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "keywords": [
@@ -16,7 +16,7 @@
     "rest",
     "graphql"
   ],
-  "author": "Feathers Playground Team",
+  "author": "Shahboz Munirov",
   "license": "MIT",
   "homepage": "https://github.com/shakhbozmn/feathers-board#readme",
   "repository": {

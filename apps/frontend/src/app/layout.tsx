@@ -7,9 +7,10 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Feathers Playground',
-  description: 'A Swagger UI + Postman-like playground for Feathers v5',
+  description:
+    'Interactive API playground and testing environment for FeathersJS v5 applications',
   keywords: ['feathers', 'api', 'playground', 'swagger', 'postman'],
-  authors: [{ name: 'Feathers Playground Team' }],
+  authors: [{ name: 'Shahboz Munirov' }],
   viewport: 'width=device-width, initial-scale=1',
 };
 

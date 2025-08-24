@@ -1,6 +1,6 @@
 {
   "name": "@feathers-playground/types",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared TypeScript types for Feathers Playground",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,15 +12,15 @@
     "api",
     "playground"
   ],
-  "author": "Feathers Playground Team",
+  "author": "Shahboz Munirov",
   "license": "MIT",
-  "homepage": "https://github.com/feathersjs-ecosystem/feathers-playground#readme",
+  "homepage": "https://github.com/shakhbozmn/feathers-board#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/shakhbozmn/feathers-board.git"
   },
   "bugs": {
-    "url": "https://github.com/feathersjs-ecosystem/feathers-playground/issues"
+    "url": "https://github.com/shakhbozmn/feathers-board/issues"
   },
   "scripts": {
     "build": "tsc",

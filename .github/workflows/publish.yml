@@ -3,12 +3,6 @@ name: Publish to NPM
 on:
   release:
     types: [published]
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to publish (e.g., 1.0.0)'
-        required: true
-        type: string
 
 jobs:
   publish:
@@ -40,14 +34,21 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-      - name: Update version (if manual trigger)
-        if: github.event_name == 'workflow_dispatch'
+      - name: Extract version from release tag
+        id: get_version
         run: |
-          # Update version in package.json files
-          cd packages/core
-          npm version ${{ github.event.inputs.version }} --no-git-tag-version
-          cd ../types
-          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          # Extract version from GitHub release tag (v1.2.3 -> 1.2.3)
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Release version: ${VERSION}"
+
+      - name: Update root package.json version
+        run: |
+          # Update the version in root package.json
+          npm version ${{ steps.get_version.outputs.version }} --no-git-tag-version --allow-same-version
+
+      - name: Sync versions across all packages
+        run: pnpm sync-versions
 
       - name: Publish @feathers-playground/types
         run: |
@@ -63,16 +64,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Create GitHub Release (if manual trigger)
-        if: github.event_name == 'workflow_dispatch'
+      - name: Confirm published versions
         run: |
-          gh release create v${{ github.event.inputs.version }} \
-            --title "Release v${{ github.event.inputs.version }}" \
-            --notes "## Changes
-          - Updated to version ${{ github.event.inputs.version }}
-
-          ## NPM Packages
-          - \`feathers-playground@${{ github.event.inputs.version }}\`
-          - \`@feathers-playground/types@${{ github.event.inputs.version }}\`"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "✅ Successfully published packages:"
+          echo "- feathers-playground@${{ steps.get_version.outputs.version }}"
+          echo "- @feathers-playground/types@${{ steps.get_version.outputs.version }}"

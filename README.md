@@ -1,6 +1,6 @@
 # Feathers Playground 🪶✨
 
-A **Swagger UI + Postman–like playground for Feathers v5**. This tool allows developers to:
+A **Interactive API playground and testing environment for FeathersJS v5 applications**. This tool allows developers to:
 
 - Visualize Feathers services & schemas
 - Test API requests directly from the browser
@@ -246,4 +246,4 @@ MIT License - see [LICENSE](./LICENSE) file for details.
 
 ## 🐛 Issues & Support
 
-Please report issues on the [GitHub Issues](https://github.com/shakhbozmn/feathers-board.git/issues) page.
+Please report issues on the [GitHub Issues](https://github.com/shakhbozmn/feathers-board/issues) page.
