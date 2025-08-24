@@ -11,6 +11,7 @@ This project uses a centralized version management system to ensure consistency 
 ## Version Synchronization
 
 ### Manual Sync
+
 To manually synchronize all package versions:
 
 ```bash
@@ -18,18 +19,22 @@ pnpm sync-versions
 ```
 
 This script:
+
 1. Reads the version from root [`package.json`](package.json)
 2. Updates all package.json files in [`apps/`](apps/) and [`packages/`](packages/) directories
 3. Reports which packages were updated
 
 ### Automated Sync
+
 The [`sync-versions`](scripts/sync-versions.js) script runs automatically during CI/CD when:
+
 - A new GitHub release is published
 - The publish workflow extracts the version from the release tag (e.g., `v1.2.3` → `1.2.3`)
 
 ## Release Process
 
 ### 1. Update Version
+
 Update the version in the root [`package.json`](package.json):
 
 ```bash
@@ -37,6 +42,7 @@ npm version patch  # or minor/major
 ```
 
 ### 2. Sync All Packages
+
 Run the sync script to ensure all packages match:
 
 ```bash
@@ -44,10 +50,13 @@ pnpm sync-versions
 ```
 
 ### 3. Create GitHub Release
+
 Create a new release on GitHub with a tag matching the version (e.g., `v1.2.3`).
 
 ### 4. Automatic Publishing
+
 The CI/CD workflow will automatically:
+
 - Extract the version from the release tag
 - Sync all package versions
 - Build and test the project
@@ -64,6 +73,7 @@ on:
 ```
 
 ### Workflow Steps
+
 1. **Extract Version**: Parse version from GitHub release tag
 2. **Update Root**: Update root package.json with the release version
 3. **Sync Packages**: Run `pnpm sync-versions` to update all packages
