@@ -54,35 +54,51 @@ export function playground(options: PlaygroundOptions = {}) {
         fs.existsSync(playgroundPath)
       ) {
         try {
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
-          const express = require('@feathersjs/express');
-          if (express.serveStatic) {
-            expressApp.use(
-              config.path,
-              express.serveStatic(playgroundPath, {
-                index: 'index.html',
-                fallthrough: false,
-              })
-            );
-            console.log(
-              `🎮 Feathers Playground (Next.js UI) available at ${config.path}`
-            );
-            return;
+          // Check if serveStatic is available directly from the app
+          if (typeof require !== 'undefined') {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const express = require('@feathersjs/express');
+            if (express.serveStatic) {
+              expressApp.use(
+                config.path,
+                express.serveStatic(playgroundPath, {
+                  index: 'index.html',
+                  fallthrough: false,
+                })
+              );
+              console.log(
+                `🎮 Feathers Playground (Next.js UI) available at ${config.path}`
+              );
+              return;
+            }
           }
         } catch {
-          // Fall through to HTML serving
+          console.log(
+            'Could not load @feathersjs/express for static serving, falling back to HTML serving'
+          );
         }
       }
 
-      // Fallback to HTML serving with improved instructions
-      app.use(config.path, {
-        async find() {
-          return { html: servePlaygroundUIContent(config) };
-        },
-      });
-      console.log(
-        `🎮 Feathers Playground (HTML fallback) available at ${config.path}`
-      );
+      // Fallback to HTML serving as Express middleware (not Feathers service)
+      if (expressApp.get && typeof expressApp.get === 'function') {
+        // This is an Express app, use Express middleware
+        expressApp.get(config.path, (req: any, res: any) => {
+          res.type('html').send(servePlaygroundUIContent(config));
+        });
+        console.log(
+          `🎮 Feathers Playground (HTML fallback) available at ${config.path}`
+        );
+      } else {
+        // Fallback for non-Express apps - register as Feathers service
+        app.use(config.path, {
+          async find() {
+            return { html: servePlaygroundUIContent(config) };
+          },
+        });
+        console.log(
+          `🎮 Feathers Playground (Feathers service fallback) available at ${config.path}`
+        );
+      }
     }
 
     // Add CORS headers if enabled using hooks

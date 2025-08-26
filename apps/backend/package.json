@@ -1,6 +1,6 @@
 {
   "name": "@feathers-playground/backend",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Feathers v5 backend with service discovery",
   "main": "dist/app.js",
   "scripts": {
