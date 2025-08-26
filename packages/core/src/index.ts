@@ -1,5 +1,7 @@
 import { ServiceInfo, ServiceMethod } from '@feathers-playground/types';
 import { Application } from '@feathersjs/feathers';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export interface PlaygroundOptions {
   path?: string;
@@ -40,13 +42,47 @@ export function playground(options: PlaygroundOptions = {}) {
       },
     });
 
-    // Serve playground UI (embedded mode) - using Feathers service pattern
+    // Serve playground UI
     if (config.path) {
+      const playgroundPath = path.join(__dirname, '..', 'playground');
+      const expressApp = app as any;
+
+      // Try to serve static Next.js files if this is an Express app and files exist
+      if (
+        expressApp.use &&
+        typeof expressApp.use === 'function' &&
+        fs.existsSync(playgroundPath)
+      ) {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const express = require('@feathersjs/express');
+          if (express.serveStatic) {
+            expressApp.use(
+              config.path,
+              express.serveStatic(playgroundPath, {
+                index: 'index.html',
+                fallthrough: false,
+              })
+            );
+            console.log(
+              `🎮 Feathers Playground (Next.js UI) available at ${config.path}`
+            );
+            return;
+          }
+        } catch {
+          // Fall through to HTML serving
+        }
+      }
+
+      // Fallback to HTML serving with improved instructions
       app.use(config.path, {
         async find() {
           return { html: servePlaygroundUIContent(config) };
         },
       });
+      console.log(
+        `🎮 Feathers Playground (HTML fallback) available at ${config.path}`
+      );
     }
 
     // Add CORS headers if enabled using hooks
@@ -127,10 +163,12 @@ function servePlaygroundUIContent(config: Required<PlaygroundOptions>): string {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .container {
             text-align: center;
@@ -138,6 +176,8 @@ function servePlaygroundUIContent(config: Required<PlaygroundOptions>): string {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             backdrop-filter: blur(10px);
+            max-width: 600px;
+            width: 100%;
         }
         .logo {
             font-size: 3rem;
@@ -147,8 +187,9 @@ function servePlaygroundUIContent(config: Required<PlaygroundOptions>): string {
             margin-bottom: 0.5rem;
         }
         p {
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             opacity: 0.9;
+            line-height: 1.6;
         }
         .button {
             display: inline-block;
@@ -159,10 +200,25 @@ function servePlaygroundUIContent(config: Required<PlaygroundOptions>): string {
             border-radius: 6px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
+            margin: 0.5rem;
         }
         .button:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
+        }
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .upgrade-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
@@ -171,8 +227,25 @@ function servePlaygroundUIContent(config: Required<PlaygroundOptions>): string {
         <div class="logo">🪶✨</div>
         <h1>${config.title}</h1>
         <p>${config.description}</p>
-        <p>To use the full playground interface, please run the standalone frontend application.</p>
+        
         <a href="/services" class="button">View Services API</a>
+        
+        <div class="upgrade-section">
+            <h3>🚀 Upgrade to Full UI</h3>
+            <p>For a rich, interactive playground experience, serve the Next.js static files at this route.</p>
+            
+            <div class="code">
+// Add this to your app configuration:<br>
+import path from 'path';<br><br>
+const playgroundPath = path.resolve(__dirname, '../node_modules/feathers-playground/playground');<br>
+app.use('${config.path}', serveStatic(playgroundPath, {<br>
+&nbsp;&nbsp;index: 'index.html',<br>
+&nbsp;&nbsp;fallthrough: false<br>
+}));
+            </div>
+            
+            <p><small>This will replace this page with a full-featured API testing interface built with Next.js.</small></p>
+        </div>
     </div>
 </body>
 </html>

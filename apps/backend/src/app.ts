@@ -9,6 +9,7 @@ import express, {
 } from '@feathersjs/express';
 import { feathers } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
+
 import { playground } from 'feathers-playground';
 
 import { channels } from './channels';
@@ -49,12 +50,12 @@ app.configure(services);
 // Configure channels
 app.configure(channels);
 
-// Configure playground (embedded mode)
+// Configure playground using the core package
 app.configure(
   playground({
     path: '/playground',
     exposeSchemas: true,
-    title: 'Feathers Playground Demo',
+    title: 'My API Playground',
     description: 'API Testing Playground for Feathers Services',
     version: '1.0.0',
     cors: true,

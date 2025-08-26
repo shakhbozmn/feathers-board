@@ -1,19 +1,19 @@
 # Usage Guide - Feathers Playground
 
-This guide shows how to use the published Feathers Playground packages in your projects.
+This guide shows how to use the Feathers Playground in your projects. **New in v1.0.2**: Get a full Next.js playground UI with just one configuration line!
 
 ## 📦 NPM Packages
 
 The Feathers Playground is published as two NPM packages:
 
-- **`feathers-playground`** - Core integration package for embedding in Feathers apps
+- **`feathers-playground`** - Core integration package with built-in Next.js UI
 - **`@feathers-playground/types`** - TypeScript types (optional, for type safety)
 
 ## 🚀 Installation & Usage
 
-### Option 1: Embedded Mode (Recommended)
+### Integrated Mode (Recommended) ✨
 
-Add the playground directly to your existing Feathers v5 application:
+Add the playground directly to your existing Feathers v5 application and get a **full Next.js interface** automatically:
 
 #### 1. Install the package
 
@@ -63,13 +63,23 @@ app.listen(PORT).then(() => {
 });
 ```
 
-#### 3. Access the playground
+#### 3. Access the full playground
 
-Visit `http://localhost:3030/playground` to access the embedded playground UI.
+Visit `http://localhost:3030/playground` to access the **complete Next.js playground interface** - no additional setup required!
 
-### Option 2: Standalone Mode
+**What you get:**
+- 🎨 Beautiful, responsive Next.js UI
+- 📋 Interactive service browser
+- 🔍 Schema visualization
+- 🛠 Request builder with forms
+- 📊 Pretty-printed response viewer
+- 📱 Mobile-friendly design
 
-Run the playground as a separate application that connects to your Feathers API:
+### Advanced: Standalone Mode
+
+**Note**: This is only needed for development or testing external APIs. Most users should use the integrated mode above.
+
+Run the playground as a separate Next.js application that connects to your Feathers API:
 
 #### 1. Clone and setup
 
@@ -150,6 +160,17 @@ const service = new UsersService();
 
 app.use('/users', service);
 ```
+
+### Automatic UI Enhancement
+
+When you install `feathers-playground` and configure it as shown above, the package automatically:
+
+1. **Detects your Express app** and serves static Next.js files
+2. **Provides service discovery** at `/services` endpoint
+3. **Serves the full UI** at your specified path (e.g., `/playground`)
+4. **Includes fallback HTML** if static files aren't available
+
+No additional build steps or separate processes required!
 
 ## 🎯 Real-World Examples
 
@@ -273,15 +294,33 @@ app.configure(
 app.listen(3030);
 ```
 
-## 🔍 Testing Your API
+## 🔍 Using the Playground Interface
 
-Once the playground is set up, you can:
+Once the playground is set up, you get a full-featured interface where you can:
 
-1. **Browse Services**: See all available services in the sidebar
-2. **View Schemas**: Understand the data structure for each service
-3. **Build Requests**: Use the form to construct API calls
-4. **Test Methods**: Try `find`, `get`, `create`, `patch`, `remove` operations
-5. **Inspect Responses**: View formatted JSON responses with status codes
+### Left Panel - Service Browser
+- 📋 **Service List**: All your Feathers services with available methods
+- 🔍 **Method Indicators**: Visual badges showing supported operations (find, get, create, patch, remove)
+- 📊 **Schema View**: JSON schema documentation for selected services
+
+### Main Area - Request Builder
+- 🎯 **Method Selection**: Choose which service method to test
+- 📝 **Request Forms**: Dynamic forms for query parameters, request body, and headers
+- 🔐 **Authentication**: Add JWT tokens or API keys
+- ⚙️ **Query Builder**: Build complex Feathers queries with `$limit`, `$skip`, `$sort`, etc.
+
+### Right Panel - Response Viewer
+- ✅ **Status Codes**: Clear HTTP status indication
+- 🎨 **Syntax Highlighting**: Pretty-printed JSON responses
+- 📏 **Response Stats**: Request timing and size information
+- ❌ **Error Handling**: Clear error messages and stack traces
+
+### Example Workflow
+1. **Select a service** from the left sidebar
+2. **Choose a method** (find, get, create, etc.)
+3. **Fill the form** with your request parameters
+4. **Click Send** to execute the request
+5. **View the response** in the right panel
 
 ### Example API Calls
 
@@ -315,8 +354,9 @@ DELETE /users/123
 
 ### Production Considerations
 
-For production deployments:
+The playground includes a full Next.js interface, so consider these options for production:
 
+#### Option 1: Development Only (Recommended)
 ```typescript
 // Only enable playground in development
 if (process.env.NODE_ENV === 'development') {
@@ -327,6 +367,31 @@ if (process.env.NODE_ENV === 'development') {
     })
   );
 }
+```
+
+#### Option 2: Internal/Staging Use
+```typescript
+// Enable for internal testing environments
+if (['development', 'staging', 'internal'].includes(process.env.NODE_ENV)) {
+  app.configure(
+    playground({
+      path: '/internal/playground',
+      title: 'Internal API Testing',
+    })
+  );
+}
+```
+
+#### Option 3: Always Available (with Access Control)
+```typescript
+// Always enable but add authentication middleware
+app.use('/playground*', authenticateAdmin); // Your auth middleware
+app.configure(
+  playground({
+    path: '/playground',
+    title: 'Admin API Playground',
+  })
+);
 ```
 
 ### Docker Example
