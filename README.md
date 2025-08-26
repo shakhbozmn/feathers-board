@@ -1,24 +1,10 @@
 # Feathers Playground 🪶✨
 
-An **Interactive API playground and testing environment for FeathersJS v5 applications**. Built with Next.js and automatically integrated into your Feathers app with a single configuration line.
+A **Interactive API playground and testing environment for FeathersJS v5 applications**. This tool allows developers to:
 
-## ✨ What's New in v1.0.2
-
-🎉 **Zero-Config Rich UI**: Installing `feathers-playground` now automatically serves a **full Next.js interface** at your `/playground` route - no separate processes needed!
-
-- **Before**: Basic HTML page with limited functionality
-- **Now**: Rich, interactive UI with service discovery, schema visualization, and request testing
-- **Setup**: Just `npm install feathers-playground` and add one configuration line
-
-## 🎯 Key Features
-
-- 🚀 **One-line integration** - Add rich playground UI to any Feathers v5 app
-- 🎨 **Beautiful Next.js Interface** - Modern UI built with TailwindCSS & shadcn/ui
-- 🔍 **Auto Service Discovery** - Automatically detects all your services and methods
-- 📋 **Schema Visualization** - Shows JSON schemas for better API understanding
-- 🛠 **Interactive Request Builder** - Build and test API requests with forms
-- 📊 **Response Viewer** - Pretty-print JSON responses with syntax highlighting
-- 📱 **Responsive Design** - Works perfectly on desktop and mobile
+- Visualize Feathers services & schemas
+- Test API requests directly from the browser
+- Use in **embedded mode** (inside their Feathers app) or **standalone mode**
 
 ## 🎯 Features
 
@@ -68,41 +54,27 @@ Feathers Playground is available as NPM packages for easy integration:
 
 ## 🚀 Quick Start
 
-### Add to Your Feathers App (2 steps!)
-
-**1. Install the package**
+### Option 1: Add to Existing Feathers App (Recommended)
 
 ```bash
 npm install feathers-playground
 ```
 
-**2. Add to your Feathers app**
-
 ```typescript
 import { playground } from 'feathers-playground';
 
-// Add this after your services are configured
+// Add to your Feathers app
 app.configure(
   playground({
-    path: '/playground',        // Where to mount the UI
-    title: 'My API Playground', // Custom title
-    description: 'Test my awesome API', // Custom description
-    exposeSchemas: true,        // Include JSON schemas
+    path: '/playground',
+    title: 'My API Playground',
   })
 );
 ```
 
-**3. That's it!** Visit `http://localhost:3030/playground` and enjoy the full Next.js playground interface.
+Visit `http://localhost:3030/playground` to access the playground.
 
-### What You Get
-
-- 🎨 **Rich UI**: Full Next.js interface with beautiful design
-- 📋 **Service Browser**: All your services listed with available methods
-- 🔍 **Schema Viewer**: JSON schema documentation for each service
-- 🛠 **Request Builder**: Interactive forms to build API requests
-- 📊 **Response Viewer**: Formatted JSON responses with error handling
-
-### Development Setup (Contributors)
+### Option 2: Development Setup (Contributors)
 
 ```bash
 # Clone the repository
@@ -119,7 +91,7 @@ pnpm build
 pnpm dev
 ```
 
-The backend will be available at `http://localhost:3030` with the playground at `http://localhost:3030/playground`.
+The backend will be available at `http://localhost:3030` and the frontend at `http://localhost:3000`.
 
 ## 🛠 Usage Examples
 
@@ -167,9 +139,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 ```
 
-### Advanced: Standalone Mode
+### Standalone Mode
 
-For development or testing external APIs:
+For testing external APIs or when you can't modify the Feathers app:
 
 ```bash
 git clone https://github.com/shakhbozmn/feathers-board.git
@@ -180,8 +152,6 @@ pnpm install && pnpm build
 export NEXT_PUBLIC_API_URL=http://your-api-url:3030
 pnpm --filter @feathers-playground/frontend dev
 ```
-
-This runs the playground as a separate Next.js app on `http://localhost:3000`.
 
 📖 **See [USAGE.md](./USAGE.md) for detailed examples and configuration options.**
 
@@ -266,8 +236,6 @@ MIT License - see [LICENSE](./LICENSE) file for details.
 
 ## 🎁 Roadmap
 
-- [x] **Rich Next.js UI** - Full-featured playground interface
-- [x] **One-line Integration** - Zero-config setup for Feathers apps
 - [ ] Auto-generate forms from JSON schemas
 - [ ] Export/import request collections (Postman-like)
 - [ ] Dark/light mode toggle
