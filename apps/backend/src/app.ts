@@ -9,8 +9,7 @@ import express, {
 } from '@feathersjs/express';
 import { feathers } from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
-
-import { playground } from 'feathers-playground';
+import path from 'path';
 
 import { channels } from './channels';
 import { services } from './services';
@@ -50,17 +49,22 @@ app.configure(services);
 // Configure channels
 app.configure(channels);
 
-// Configure playground using the core package
-app.configure(
-  playground({
-    path: '/playground',
-    exposeSchemas: true,
-    title: 'My API Playground',
-    description: 'API Testing Playground for Feathers Services',
-    version: '1.0.0',
-    cors: true,
+// Configure playground static files
+const playgroundPath = path.resolve(
+  __dirname,
+  '../../../packages/core/playground'
+);
+console.log('Looking for playground files at:', playgroundPath);
+
+// Serve the Next.js static files at /playground
+app.use(
+  '/playground',
+  serveStatic(playgroundPath, {
+    index: 'index.html',
+    fallthrough: false,
   })
 );
+console.log('✅ Playground static files configured successfully');
 
 // Configure a middleware for 404s and the error handler
 app.use(notFound());
