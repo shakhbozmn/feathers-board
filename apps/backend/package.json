@@ -1,6 +1,6 @@
 {
   "name": "@feathers-playground/backend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Feathers v5 backend with service discovery",
   "main": "dist/app.js",
   "scripts": {
@@ -13,8 +13,8 @@
     "test": "echo 'No tests yet'"
   },
   "dependencies": {
-    "@feathers-playground/types": "workspace:*",
-    "feathers-playground": "workspace:*",
+    "@feathers-playground/types": "^1.0.1",
+    "feathers-playground": "^1.0.1",
     "@feathersjs/feathers": "^5.0.11",
     "@feathersjs/express": "^5.0.11",
     "@feathersjs/socketio": "^5.0.11",

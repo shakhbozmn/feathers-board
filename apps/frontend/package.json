@@ -1,6 +1,6 @@
 {
   "name": "@feathers-playground/frontend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Next.js frontend for Feathers Playground",
   "private": true,
   "scripts": {
@@ -13,7 +13,7 @@
     "clean": "rm -rf .next dist"
   },
   "dependencies": {
-    "@feathers-playground/types": "workspace:*",
+    "@feathers-playground/types": "^1.0.1",
     "@hookform/resolvers": "^3.3.2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",

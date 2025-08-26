@@ -1,6 +1,6 @@
 {
   "name": "feathers-playground",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Interactive API playground and testing environment for FeathersJS v5 applications - Core integration package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -36,7 +36,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@feathers-playground/types": "workspace:*"
+    "@feathers-playground/types": "^1.0.1"
   },
   "devDependencies": {
     "typescript": "^5.6.0",

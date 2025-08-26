@@ -35,7 +35,7 @@ A **Interactive API playground and testing environment for FeathersJS v5 applica
   - In-memory data stores (users, messages)
 
 - **Frontend** (`apps/frontend`)
-  - Next.js 14 (App Router) + TypeScript
+  - Next.js 15 (App Router) + TypeScript
   - TailwindCSS + shadcn/ui components
   - React Query for API state management
   - react-json-view for response display

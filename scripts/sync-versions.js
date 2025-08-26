@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
- * Synchronizes versions across all packages in the workspace
+ * Synchronizes versions across all packages in the workspace and resolves workspace dependencies
  * Uses the version from the root package.json as the source of truth
  */
 
@@ -33,16 +33,47 @@ packagePaths.forEach(packagePath => {
 
   try {
     const packageJson = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+    let wasUpdated = false;
 
+    // Update version if needed
     if (packageJson.version !== targetVersion) {
       packageJson.version = targetVersion;
-      fs.writeFileSync(fullPath, JSON.stringify(packageJson, null, 2) + '\n');
+      wasUpdated = true;
       console.log(
-        `✅ Updated ${packagePath}: ${packageJson.version} → ${targetVersion}`
+        `✅ Updated ${packagePath} version: ${packageJson.version} → ${targetVersion}`
       );
+    }
+
+    // Resolve workspace dependencies
+    const dependencyTypes = [
+      'dependencies',
+      'devDependencies',
+      'peerDependencies',
+    ];
+
+    dependencyTypes.forEach(depType => {
+      if (packageJson[depType]) {
+        Object.keys(packageJson[depType]).forEach(depName => {
+          const depVersion = packageJson[depType][depName];
+
+          // Check if it's a workspace dependency
+          if (depVersion.startsWith('workspace:')) {
+            // Resolve workspace dependencies to the target version
+            packageJson[depType][depName] = `^${targetVersion}`;
+            wasUpdated = true;
+            console.log(
+              `✅ Resolved workspace dependency in ${packagePath}: ${depName}@${depVersion} → ${depName}@^${targetVersion}`
+            );
+          }
+        });
+      }
+    });
+
+    if (wasUpdated) {
+      fs.writeFileSync(fullPath, JSON.stringify(packageJson, null, 2) + '\n');
       updatedCount++;
     } else {
-      console.log(`✓ ${packagePath} already at version ${targetVersion}`);
+      console.log(`✓ ${packagePath} already synchronized`);
     }
   } catch (error) {
     console.error(`❌ Error updating ${packagePath}:`, error.message);
