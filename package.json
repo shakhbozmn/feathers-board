@@ -1,6 +1,6 @@
 {
   "name": "feathers-playground",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Interactive API playground and testing environment for FeathersJS v5 applications - Build, test, and explore your APIs with ease",
   "type": "module",
   "private": true,

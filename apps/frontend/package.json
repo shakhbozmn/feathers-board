@@ -1,6 +1,6 @@
 {
   "name": "@feathers-playground/frontend",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Next.js frontend for Feathers Playground",
   "private": true,
   "scripts": {

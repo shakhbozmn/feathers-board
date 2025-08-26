@@ -57,7 +57,8 @@ Feathers Playground is available as NPM packages for easy integration:
 ### Option 1: Add to Existing Feathers App (Recommended)
 
 ```bash
-npm install feathers-playground
+# Install feathers-playground and its peer dependencies
+npm install feathers-playground @feathersjs/feathers @feathersjs/express
 ```
 
 ```typescript

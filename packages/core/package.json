@@ -1,6 +1,6 @@
 {
   "name": "feathers-playground",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Interactive API playground and testing environment for FeathersJS v5 applications - Core integration package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -46,6 +46,11 @@
     "@feathersjs/feathers": "^5.0.0",
     "@feathersjs/express": "^5.0.0"
   },
+  "peerDependenciesMeta": {
+    "@feathersjs/express": {
+      "optional": false
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -57,6 +62,7 @@
     "dist",
     "playground",
     "README.md",
+    "INSTALLATION.md",
     "LICENSE"
   ],
   "engines": {

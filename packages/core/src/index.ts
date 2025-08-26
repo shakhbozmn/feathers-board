@@ -73,7 +73,12 @@ export function playground(options: PlaygroundOptions = {}) {
         } catch (error) {
           console.error('Error setting up playground static files:', error);
           throw new Error(
-            'Failed to configure Feathers Playground. Ensure @feathersjs/express is available.'
+            'Failed to configure Feathers Playground. Please ensure @feathersjs/express is installed:\n' +
+              '  npm install @feathersjs/express\n' +
+              '  # or\n' +
+              '  yarn add @feathersjs/express\n' +
+              '  # or\n' +
+              '  pnpm add @feathersjs/express'
           );
         }
       } else {
