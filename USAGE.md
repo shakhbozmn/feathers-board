@@ -17,8 +17,8 @@ Add the playground directly to your existing Feathers v5 application:
 
 #### 1. Install the package
 
+**For Feathers with Express:**
 ```bash
-# Install feathers-playground and its peer dependencies
 npm install feathers-playground @feathersjs/feathers @feathersjs/express
 # or
 yarn add feathers-playground @feathersjs/feathers @feathersjs/express
@@ -26,7 +26,16 @@ yarn add feathers-playground @feathersjs/feathers @feathersjs/express
 pnpm add feathers-playground @feathersjs/feathers @feathersjs/express
 ```
 
-> **Note**: `@feathersjs/feathers` and `@feathersjs/express` are peer dependencies that must be installed alongside `feathers-playground`.
+**For Feathers with Koa:**
+```bash
+npm install feathers-playground @feathersjs/feathers @feathersjs/koa koa-static
+# or
+yarn add feathers-playground @feathersjs/feathers @feathersjs/koa koa-static
+# or
+pnpm add feathers-playground @feathersjs/feathers @feathersjs/koa koa-static
+```
+
+> **Note**: The package works with both Express and Koa. Install the appropriate dependencies for your setup.
 
 #### 2. Add to your Feathers app
 

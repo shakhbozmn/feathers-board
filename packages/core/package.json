@@ -1,6 +1,6 @@
 {
   "name": "feathers-playground",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Interactive API playground and testing environment for FeathersJS v5 applications - Core integration package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -43,12 +43,17 @@
     "@types/express": "^4.17.21"
   },
   "peerDependencies": {
-    "@feathersjs/feathers": "^5.0.0",
-    "@feathersjs/express": "^5.0.0"
+    "@feathersjs/feathers": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "@feathersjs/express": {
-      "optional": false
+      "optional": true
+    },
+    "@feathersjs/koa": {
+      "optional": true
+    },
+    "koa-static": {
+      "optional": true
     }
   },
   "exports": {

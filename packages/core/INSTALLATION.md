@@ -2,10 +2,10 @@
 
 ## Quick Start
 
-To install `feathers-playground` in your Feathers v5 application:
+### For Feathers with Express
 
 ```bash
-# Install feathers-playground and its required peer dependencies
+# Install feathers-playground with Express dependencies
 npm install feathers-playground @feathersjs/feathers @feathersjs/express
 
 # Or with yarn
@@ -13,6 +13,19 @@ yarn add feathers-playground @feathersjs/feathers @feathersjs/express
 
 # Or with pnpm
 pnpm add feathers-playground @feathersjs/feathers @feathersjs/express
+```
+
+### For Feathers with Koa
+
+```bash
+# Install feathers-playground with Koa dependencies
+npm install feathers-playground @feathersjs/feathers @feathersjs/koa koa-static
+
+# Or with yarn
+yarn add feathers-playground @feathersjs/feathers @feathersjs/koa koa-static
+
+# Or with pnpm
+pnpm add feathers-playground @feathersjs/feathers @feathersjs/koa koa-static
 ```
 
 ## Why Peer Dependencies?
@@ -25,13 +38,17 @@ This package requires `@feathersjs/feathers` and `@feathersjs/express` as peer d
 
 ## Troubleshooting
 
-### Error: "Failed to configure Feathers Playground. Please ensure @feathersjs/express is installed"
+### Error: "Failed to configure Feathers Playground" or static serving issues
 
-This error occurs when `@feathersjs/express` is not installed. Install it with:
+This can occur for several reasons:
 
-```bash
-npm install @feathersjs/express
-```
+1. **Missing web framework dependencies**:
+   - For Express: `npm install @feathersjs/express`
+   - For Koa: `npm install @feathersjs/koa koa-static`
+
+2. **Framework not detected**: The playground will still provide API endpoints but may not serve the UI
+
+3. **Fallback mode**: If neither Express nor Koa static serving is available, the playground uses a basic fallback that should work with most setups
 
 ### Error: "Static files not found"
 

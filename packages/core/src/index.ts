@@ -42,49 +42,152 @@ export function playground(options: PlaygroundOptions = {}) {
       },
     });
 
-    // Serve playground UI - Next.js static files only
+    // Serve playground UI - Next.js static files
     if (config.path) {
       const playgroundPath = path.join(__dirname, '..', 'playground');
-      const expressApp = app as any;
 
-      // Ensure this is an Express app and playground files exist
-      if (
-        expressApp.use &&
-        typeof expressApp.use === 'function' &&
-        fs.existsSync(playgroundPath)
-      ) {
-        try {
-          // Check if serveStatic is available directly from the app
-          if (typeof require !== 'undefined') {
-            // eslint-disable-next-line @typescript-eslint/no-require-imports
-            const express = require('@feathersjs/express');
-            if (express.serveStatic) {
-              expressApp.use(
-                config.path,
-                express.serveStatic(playgroundPath, {
-                  index: 'index.html',
-                  fallthrough: false,
-                })
-              );
-              console.log(`🎮 Feathers Playground available at ${config.path}`);
-              return;
-            }
-          }
-        } catch (error) {
-          console.error('Error setting up playground static files:', error);
-          throw new Error(
-            'Failed to configure Feathers Playground. Please ensure @feathersjs/express is installed:\n' +
-              '  npm install @feathersjs/express\n' +
-              '  # or\n' +
-              '  yarn add @feathersjs/express\n' +
-              '  # or\n' +
-              '  pnpm add @feathersjs/express'
-          );
-        }
-      } else {
+      if (!fs.existsSync(playgroundPath)) {
         throw new Error(
           `Feathers Playground: Static files not found at ${playgroundPath}. ` +
             'Ensure the playground is built and included in the package.'
+        );
+      }
+
+      try {
+        const webApp = app as any;
+
+        // Try to detect if this is Express or Koa and configure accordingly
+        if (webApp.use && typeof webApp.use === 'function') {
+          let staticMiddleware = null;
+
+          // Try Express first
+          try {
+            if (typeof require !== 'undefined') {
+              // eslint-disable-next-line @typescript-eslint/no-require-imports
+              const express = require('@feathersjs/express');
+              if (express.serveStatic) {
+                staticMiddleware = express.serveStatic(playgroundPath, {
+                  index: 'index.html',
+                  fallthrough: false,
+                });
+              }
+            }
+          } catch (expressError) {
+            // Express not available, try Koa
+          }
+
+          // If Express static serving failed, try Koa
+          if (!staticMiddleware) {
+            try {
+              if (typeof require !== 'undefined') {
+                // eslint-disable-next-line @typescript-eslint/no-require-imports
+                const koaStatic = require('koa-static');
+                staticMiddleware = koaStatic(playgroundPath);
+              }
+            } catch (koaError) {
+              // Neither Express nor Koa static serving available
+            }
+          }
+
+          // If we have static middleware, use it
+          if (staticMiddleware) {
+            webApp.use(config.path, staticMiddleware);
+            console.log(`🎮 Feathers Playground available at ${config.path}`);
+          } else {
+            // Fallback: Use a simple custom middleware for static file serving
+            const staticHandler = (req: any, res: any, next: any) => {
+              const requestPath = req.path || req.url || '/';
+              const relativePath = requestPath.replace(config.path, '') || '/';
+              let filePath =
+                relativePath === '/' ? '/index.html' : relativePath;
+
+              const fullPath = path.join(playgroundPath, filePath);
+
+              // Security check
+              if (!fullPath.startsWith(playgroundPath)) {
+                if (next) next();
+                return;
+              }
+
+              // Serve file if it exists
+              if (fs.existsSync(fullPath)) {
+                const ext = path.extname(fullPath).toLowerCase();
+                const contentTypes: Record<string, string> = {
+                  '.html': 'text/html',
+                  '.js': 'application/javascript',
+                  '.css': 'text/css',
+                  '.json': 'application/json',
+                  '.png': 'image/png',
+                  '.jpg': 'image/jpeg',
+                  '.jpeg': 'image/jpeg',
+                  '.gif': 'image/gif',
+                  '.svg': 'image/svg+xml',
+                  '.woff': 'font/woff',
+                  '.woff2': 'font/woff2',
+                };
+
+                const contentType =
+                  contentTypes[ext] || 'application/octet-stream';
+                const isBinary = [
+                  '.png',
+                  '.jpg',
+                  '.jpeg',
+                  '.gif',
+                  '.woff',
+                  '.woff2',
+                ].includes(ext);
+
+                if (res.setHeader) {
+                  res.setHeader('Content-Type', contentType);
+                }
+
+                if (res.send) {
+                  // Express-style response
+                  const content = isBinary
+                    ? fs.readFileSync(fullPath)
+                    : fs.readFileSync(fullPath, 'utf8');
+                  res.send(content);
+                } else if (res.body !== undefined) {
+                  // Koa-style response
+                  res.body = isBinary
+                    ? fs.readFileSync(fullPath)
+                    : fs.readFileSync(fullPath, 'utf8');
+                }
+              } else if (filePath !== '/index.html') {
+                // For SPA, serve index.html for non-existent routes
+                const indexPath = path.join(playgroundPath, 'index.html');
+                if (fs.existsSync(indexPath)) {
+                  if (res.setHeader) {
+                    res.setHeader('Content-Type', 'text/html');
+                  }
+                  const indexContent = fs.readFileSync(indexPath, 'utf8');
+                  if (res.send) {
+                    res.send(indexContent);
+                  } else if (res.body !== undefined) {
+                    res.body = indexContent;
+                  }
+                } else if (next) {
+                  next();
+                }
+              } else if (next) {
+                next();
+              }
+            };
+
+            webApp.use(config.path, staticHandler);
+            console.log(
+              `🎮 Feathers Playground available at ${config.path} (using fallback static serving)`
+            );
+          }
+        } else {
+          console.warn(
+            '🎮 Feathers Playground: Cannot serve static files - web framework not detected'
+          );
+        }
+      } catch (error) {
+        console.error('Error setting up playground static files:', error);
+        console.log(
+          '🎮 Feathers Playground: API endpoints available, but static UI serving failed'
         );
       }
     }
