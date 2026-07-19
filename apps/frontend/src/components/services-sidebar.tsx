@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useServices } from '@/hooks/use-services';
 import { cn } from '@/lib/utils';
 import { ServiceInfo } from '@feathers-playground/types';
+import { useCallback, useRef, useState } from 'react';
 
 interface ServicesSidebarProps {
   selectedService: ServiceInfo | null;
@@ -16,6 +17,51 @@ export function ServicesSidebar({
   onServiceSelect,
 }: ServicesSidebarProps) {
   const { data: services, isLoading, error } = useServices();
+
+  // Roving-tabindex state for the services listbox. Only one option is in
+  // the page tab order at a time; ArrowUp/Down/Left/Right/Home/End move
+  // focus between options and Enter/Space activates the focused option.
+  const [focusedIndex, setFocusedIndex] = useState<number>(() => {
+    if (!selectedService) return 0;
+    return -1; // initialised below after services load
+  });
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const focusOption = useCallback((idx: number) => {
+    const button = optionRefs.current[idx];
+    if (button) button.focus();
+  }, []);
+
+  const handleListboxKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (!services || services.length === 0) return;
+      const last = services.length - 1;
+      let next = focusedIndex < 0 ? 0 : focusedIndex;
+
+      switch (e.key) {
+        case 'ArrowDown':
+        case 'ArrowRight':
+          next = focusedIndex >= last ? 0 : focusedIndex + 1;
+          break;
+        case 'ArrowUp':
+        case 'ArrowLeft':
+          next = focusedIndex <= 0 ? last : focusedIndex - 1;
+          break;
+        case 'Home':
+          next = 0;
+          break;
+        case 'End':
+          next = last;
+          break;
+        default:
+          return;
+      }
+      e.preventDefault();
+      setFocusedIndex(next);
+      focusOption(next);
+    },
+    [services, focusedIndex, focusOption]
+  );
 
   if (isLoading) {
     return (
@@ -31,25 +77,23 @@ export function ServicesSidebar({
 
   if (error) {
     const message =
-      (error as { message?: string })?.message ??
-      'Could not reach the API.';
+      (error as { message?: string })?.message ?? 'Could not reach the API.';
     return (
       <div className="p-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-destructive text-base">
-              Couldn’t load services
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">{message}</p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Check that the backend is running and that{' '}
-              <code className="font-mono">NEXT_PUBLIC_API_URL</code> points to
-              it.
-            </p>
-          </CardContent>
-        </Card>
+        <div
+          role="alert"
+          className="rounded-md border border-destructive p-3 text-sm"
+        >
+          <p className="font-medium text-destructive">
+            Couldn’t load services
+          </p>
+          <p className="text-muted-foreground mt-1">{message}</p>
+          <p className="text-xs text-muted-foreground mt-2">
+            Check that the backend is running and that{' '}
+            <code className="font-mono">NEXT_PUBLIC_API_URL</code> points to
+            it.
+          </p>
+        </div>
       </div>
     );
   }
@@ -67,49 +111,86 @@ export function ServicesSidebar({
         className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2"
         role="listbox"
         aria-label="Feathers services"
+        aria-activedescendant={
+          focusedIndex >= 0 && services && services[focusedIndex]
+            ? `service-option-${services[focusedIndex].name}`
+            : undefined
+        }
+        onKeyDown={handleListboxKeyDown}
       >
-        {services?.map((service: ServiceInfo) => {
+        {services?.map((service: ServiceInfo, idx: number) => {
           const selected = selectedService?.name === service.name;
+          const isFocused = focusedIndex === idx;
+          const methodsSummary = `${service.methods.length} method${
+            service.methods.length === 1 ? '' : 's'
+          }`;
+          const a11yLabel = `${service.name} at ${service.path}, ${methodsSummary}${
+            service.description ? ' — ' + service.description : ''
+          }`;
+
           return (
             <Button
               key={service.name}
-              variant={selected ? 'default' : 'ghost'}
+              id={`service-option-${service.name}`}
+              ref={el => {
+                optionRefs.current[idx] = el;
+              }}
+              variant="ghost"
               role="option"
               aria-selected={selected}
+              aria-label={a11yLabel}
+              tabIndex={isFocused ? 0 : -1}
+              title={service.description || service.path}
               className={cn(
-                'w-full justify-start h-auto min-h-[44px] p-3 text-left',
-                selected && 'bg-primary-strong text-primary-foreground hover:bg-primary-strong-hover'
+                'group relative w-full justify-start min-h-[44px] h-auto p-3 text-left',
+                selected && 'bg-secondary text-foreground hover:bg-secondary'
               )}
-              onClick={() => onServiceSelect(service)}
+              onClick={() => {
+                setFocusedIndex(idx);
+                onServiceSelect(service);
+              }}
+              onFocus={() => setFocusedIndex(idx)}
             >
-              <div className="flex flex-col items-start space-y-1 w-full min-w-0">
-                <div className="font-medium truncate w-full">{service.name}</div>
-                <div className="text-xs opacity-80 font-mono truncate w-full">
+              {/* Default compact row: name + path. Two lines. */}
+              <span className="w-full min-w-0">
+                <span className="block font-medium truncate">
+                  {service.name}
+                </span>
+                <span className="block text-xs font-mono opacity-80 truncate">
                   {service.path}
-                </div>
+                </span>
+              </span>
+
+              {/* Detail row: method chips + description.
+                  - Visible by default when selected (the row is engaged).
+                  - Otherwise hidden until hover or keyboard focus inside the row.
+                  - Screen readers get the full picture via aria-label above. */}
+              <span
+                className={cn(
+                  'w-full min-w-0 mt-0',
+                  selected || isFocused
+                    ? 'block'
+                    : 'hidden group-hover:block group-focus-within:block'
+                )}
+              >
                 {service.methods.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1">
+                  <span className="mt-2 flex flex-wrap gap-1">
                     {service.methods.map((method: string) => (
                       <span
                         key={method}
-                        className={cn(
-                          'px-1.5 py-0.5 text-xs rounded font-mono',
-                          selected
-                            ? 'bg-primary-foreground/15 text-primary-foreground'
-                            : 'bg-muted text-muted-foreground'
-                        )}
+                        className="px-1.5 py-0.5 text-xs rounded font-mono bg-muted text-muted-foreground"
                       >
                         {method.toUpperCase()}
                       </span>
                     ))}
-                  </div>
+                  </span>
                 )}
                 {service.description && (
-                  <div className="text-xs opacity-75 mt-1 line-clamp-2 w-full">
+                  <span className="mt-2 block text-xs opacity-80 line-clamp-2">
                     {service.description}
-                  </div>
+                  </span>
                 )}
-              </div>
+              </span>
             </Button>
           );
         })}

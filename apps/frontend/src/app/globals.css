@@ -39,6 +39,7 @@
 
     --destructive: oklch(0.50 0.20 25);
     --destructive-foreground: oklch(0.99 0.005 25);
+    --destructive-bg: oklch(0.94 0.04 25);
 
     --border: oklch(0.90 0.008 60);
     --input: oklch(0.90 0.008 60);
@@ -87,6 +88,7 @@
 
     --destructive: oklch(0.62 0.18 25);
     --destructive-foreground: oklch(0.99 0.005 25);
+    --destructive-bg: oklch(0.25 0.05 25);
 
     --border: oklch(0.28 0.008 60);
     --input: oklch(0.28 0.008 60);
@@ -122,6 +124,18 @@
   samp,
   .font-mono {
     font-variant-ligatures: none;
+  }
+
+  /* Inline code callouts use the Aubergine accent — the second voice
+     alongside Honey, reserved for typographic reference. */
+  code:not(pre code):not(pre kbd) {
+    color: var(--accent);
+    font-family: ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas,
+      monospace;
+    font-size: 0.85em;
+    padding: 1px 4px;
+    border-radius: 2px;
+    background: oklch(from var(--accent) l c h / 0.08);
   }
 }
 

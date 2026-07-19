@@ -30,6 +30,53 @@ export function isValidJson(str: string): boolean {
   }
 }
 
+// Escape a string for safe inclusion inside a single-quoted shell argument.
+// Standard POSIX shell: 'foo'bar -> 'foo'\''bar'. The trailing `'\''`
+// closes the quoted string, adds an escaped single quote, and reopens.
+function shellQuoteSingle(value: string): string {
+  return value.replace(/'/g, "'\\''");
+}
+
+export interface CurlRequest {
+  method: string;
+  url: string;
+  headers?: Record<string, string>;
+  data?: any;
+}
+
+/**
+ * Build a canonical cURL command string from a request. Multi-line with
+ * backslash continuations, headers alphabetised, body escaped to one line.
+ * Output is copy-pasteable into a POSIX shell (bash / zsh).
+ */
+export function buildCurl(req: CurlRequest): string {
+  const method = req.method.toUpperCase();
+  const headerLines = Object.entries(req.headers || {})
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => `  -H '${shellQuoteSingle(`${k}: ${v}`)}'`)
+    .join(' \\\n');
+
+  const hasBody =
+    req.data !== undefined &&
+    req.data !== null &&
+    !(typeof req.data === 'object' && Object.keys(req.data).length === 0) &&
+    method !== 'GET' &&
+    method !== 'DELETE';
+  const bodyJson =
+    typeof req.data === 'string' ? req.data : JSON.stringify(req.data);
+  const bodyLine = hasBody
+    ? `  -d '${shellQuoteSingle(bodyJson)}'`
+    : '';
+
+  return [
+    `curl -X ${method} '${shellQuoteSingle(req.url)}'`,
+    headerLines,
+    bodyLine,
+  ]
+    .filter(Boolean)
+    .join(' \\\n');
+}
+
 // Minimal JSON Schema shape we care about (matches @feathers-playground/types).
 type SchemaLike = {
   type?: string;

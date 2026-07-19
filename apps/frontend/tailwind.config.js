@@ -35,6 +35,7 @@ module.exports = {
         destructive: {
           DEFAULT: 'var(--destructive)',
           foreground: 'var(--destructive-foreground)',
+          bg: 'var(--destructive-bg)',
         },
         muted: {
           DEFAULT: 'var(--muted)',

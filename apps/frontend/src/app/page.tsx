@@ -1,12 +1,11 @@
 'use client';
 
 import { ResponseViewer } from '@/components/response-viewer';
-import { SchemaViewer } from '@/components/schema-viewer';
 import { ServicesSidebar } from '@/components/services-sidebar';
 import { Button } from '@/components/ui/button';
-import { ServiceInfo } from '@feathers-playground/types';
+import { ApiRequest, ServiceInfo } from '@feathers-playground/types';
 import { Menu, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { RequestBuilder } from '../components/request-builder';
 
 type MobileTab = 'request' | 'response';
@@ -16,9 +15,15 @@ export default function PlaygroundPage() {
     null
   );
   const [response, setResponse] = useState<any>(null);
+  const [lastRequest, setLastRequest] = useState<
+    (ApiRequest & { url: string; httpMethod: string }) | null
+  >(null);
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>('request');
+
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const handleSelectService = (service: ServiceInfo) => {
     setSelectedService(service);
@@ -26,11 +31,29 @@ export default function PlaygroundPage() {
     setMobileTab('request');
   };
 
+  const openSidebar = () => setSidebarOpen(true);
+  const closeSidebar = () => setSidebarOpen(false);
+
   // Esc closes the mobile drawer (sighted and keyboard parity).
+  // Focus management: when opened, move focus to the close button inside
+  // the drawer. When closed, restore focus to the menu trigger.
+  useEffect(() => {
+    if (sidebarOpen) {
+      // Move focus to the close button on the next tick so the drawer's
+      // open-state styles have applied.
+      const id = window.setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 0);
+      return () => window.clearTimeout(id);
+    }
+    // Restore focus to the menu trigger on close (only if it still exists).
+    menuButtonRef.current?.focus();
+  }, [sidebarOpen]);
+
   useEffect(() => {
     if (!sidebarOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSidebarOpen(false);
+      if (e.key === 'Escape') closeSidebar();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -41,7 +64,7 @@ export default function PlaygroundPage() {
       {/* Mobile backdrop */}
       <div
         aria-hidden
-        onClick={() => setSidebarOpen(false)}
+        onClick={closeSidebar}
         className={`fixed inset-0 z-40 bg-foreground/40 md:hidden transition-opacity duration-200 ${
           sidebarOpen
             ? 'opacity-100'
@@ -49,21 +72,30 @@ export default function PlaygroundPage() {
         }`}
       />
 
-      {/* Sidebar: drawer on mobile, persistent panel on md+ */}
+      {/* Sidebar: drawer on mobile, persistent panel on md+.
+          On mobile when open, behaves as a modal dialog — role/aria-modal/
+          inert on the rest of the page keep keyboard focus inside.
+          The mobile drawer carries the one DESIGN-permitted ambient shadow
+          (drawer-ambient) — see DESIGN.md shadow vocabulary. */}
       <aside
         aria-label="Services"
-        className={`fixed inset-y-0 left-0 z-50 w-80 bg-card border-r border-border flex flex-col transform transition-transform duration-200 ease-out md:relative md:translate-x-0 md:z-auto ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        role={sidebarOpen ? 'dialog' : undefined}
+        aria-modal={sidebarOpen ? true : undefined}
+        className={`fixed inset-y-0 left-0 z-50 w-80 bg-card border-r border-border flex flex-col transform transition-transform duration-200 ease-out md:relative md:translate-x-0 md:z-auto md:shadow-none ${
+          sidebarOpen
+            ? 'translate-x-0 shadow-[0_4px_24px_oklch(0_0_0_/_0.08)]'
+            : '-translate-x-full shadow-none'
         }`}
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
           <h2 className="text-base font-semibold">Services</h2>
           <Button
+            ref={closeButtonRef}
             variant="ghost"
             size="icon"
             className="md:hidden"
             aria-label="Close services"
-            onClick={() => setSidebarOpen(false)}
+            onClick={closeSidebar}
           >
             <X className="h-5 w-5" aria-hidden />
           </Button>
@@ -76,17 +108,26 @@ export default function PlaygroundPage() {
         </div>
       </aside>
 
-      {/* Main column */}
-      <main className="flex-1 flex flex-col min-w-0">
+      {/* Main column. `inert` while the mobile drawer is open removes every
+          focusable descendant from the tab order — the simplest portable
+          focus-trap without a third-party library. */}
+      <main
+        className="flex-1 flex flex-col min-w-0"
+        // @ts-expect-error — `inert` is a valid HTML attribute; React's
+        // typings lag a few versions behind.
+        inert={sidebarOpen ? '' : undefined}
+      >
         {/* Header */}
         <header className="border-b border-border bg-card px-4 md:px-6 py-3 flex items-center gap-3 shrink-0">
           <Button
+            ref={menuButtonRef}
             variant="ghost"
             size="icon"
             className="md:hidden shrink-0"
             aria-label="Open services"
             aria-expanded={sidebarOpen}
-            onClick={() => setSidebarOpen(true)}
+            aria-haspopup="dialog"
+            onClick={openSidebar}
           >
             <Menu className="h-5 w-5" aria-hidden />
           </Button>
@@ -128,7 +169,7 @@ export default function PlaygroundPage() {
                 onClick={() => setMobileTab(t)}
                 className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                   active
-                    ? 'border-primary-strong text-foreground'
+                    ? 'border-primary-strong bg-secondary text-foreground'
                     : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -148,22 +189,16 @@ export default function PlaygroundPage() {
               mobileTab === 'request' ? '' : 'hidden md:flex'
             }`}
           >
-            <div className="flex-1 min-h-0">
-              <RequestBuilder
-                service={selectedService}
-                onResponse={setResponse}
-                loading={loading}
-                onLoadingChange={(v) => {
-                  setLoading(v);
-                  if (v) setMobileTab('response');
-                }}
-              />
-            </div>
-            {selectedService?.schema && (
-              <div className="h-64 md:h-80 border-t border-border shrink-0">
-                <SchemaViewer schema={selectedService.schema} />
-              </div>
-            )}
+            <RequestBuilder
+              service={selectedService}
+              onResponse={setResponse}
+              onRequest={setLastRequest}
+              loading={loading}
+              onLoadingChange={(v) => {
+                setLoading(v);
+                if (v) setMobileTab('response');
+              }}
+            />
           </section>
 
           <section
@@ -174,7 +209,11 @@ export default function PlaygroundPage() {
               mobileTab === 'response' ? '' : 'hidden md:block'
             }`}
           >
-            <ResponseViewer response={response} loading={loading} />
+            <ResponseViewer
+              response={response}
+              request={lastRequest}
+              loading={loading}
+            />
           </section>
         </div>
       </main>
