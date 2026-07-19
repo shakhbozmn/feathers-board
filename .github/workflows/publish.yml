@@ -62,14 +62,24 @@ jobs:
       - name: Publish @feathers-playground/types
         run: |
           cd packages/types
-          npm publish --access public
+          V=$(node -p "require('./package.json').version")
+          if npm view "@feathers-playground/types@$V" version >/dev/null 2>&1; then
+            echo "@feathers-playground/types@$V already published, skipping"
+          else
+            npm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish feathers-playground
         run: |
           cd packages/core
-          npm publish --access public
+          V=$(node -p "require('./package.json').version")
+          if npm view "feathers-playground@$V" version >/dev/null 2>&1; then
+            echo "feathers-playground@$V already published, skipping"
+          else
+            npm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
