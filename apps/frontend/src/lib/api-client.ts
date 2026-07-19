@@ -85,11 +85,14 @@ export class ApiClient {
 
       return apiResponse;
     } catch (error) {
-      if (error instanceof Error && 'code' in error) {
-        throw error; // Re-throw API errors
+      // A server error we threw above is a plain ApiError object (has `code`).
+      // Re-throw it as-is so the real status/message surfaces (e.g. 401 "Not
+      // authenticated") instead of being masked as a network error.
+      if (error && typeof error === 'object' && 'code' in error) {
+        throw error;
       }
 
-      // Handle network errors
+      // Genuine network/transport failure (fetch rejected, CORS blocked, DNS).
       throw {
         message: error instanceof Error ? error.message : 'Network error',
         code: 'NETWORK_ERROR',

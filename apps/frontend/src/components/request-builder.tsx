@@ -5,7 +5,7 @@ import {
   ServiceInfo,
   ServiceMethod,
 } from '@feathers-playground/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../components/ui/button';
 import {
   Card,
@@ -14,7 +14,12 @@ import {
   CardTitle,
 } from '../components/ui/card';
 import { apiClient } from '../lib/api-client';
-import { isValidJson, parseJson } from '../lib/utils';
+import {
+  formatJson,
+  isValidJson,
+  parseJson,
+  schemaToExample,
+} from '../lib/utils';
 
 interface RequestBuilderProps {
   service: ServiceInfo | null;
@@ -34,6 +39,22 @@ export function RequestBuilder({
   const [dataInput, setDataInput] = useState('{}');
   const [headersInput, setHeadersInput] = useState('{}');
   const [idInput, setIdInput] = useState('');
+  const [authToken, setAuthToken] = useState('');
+
+  // Build a sample request body from the service schema.
+  const buildSample = () =>
+    service?.schema ? formatJson(schemaToExample(service.schema)) : '{}';
+
+  // Pre-fill the body with a schema-based sample when the service changes or a
+  // body-carrying method is selected (only while the body is still untouched).
+  useEffect(() => {
+    if (!service) return;
+    if (!['create', 'patch'].includes(selectedMethod)) return;
+    if (dataInput.trim() === '' || dataInput.trim() === '{}') {
+      setDataInput(buildSample());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [service, selectedMethod]);
 
   const handleSubmit = async () => {
     if (!service) return;
@@ -41,22 +62,32 @@ export function RequestBuilder({
     onLoadingChange(true);
 
     try {
+      const headers: Record<string, string> = isValidJson(headersInput)
+        ? parseJson(headersInput)
+        : {};
+      // A Bearer token entered in the dedicated field wins over headers JSON.
+      if (authToken.trim()) {
+        headers['Authorization'] = `Bearer ${authToken.trim()}`;
+      }
+
       const request: ApiRequest = {
         method: selectedMethod,
         servicePath: service.path,
         query: isValidJson(queryInput) ? parseJson(queryInput) : {},
         data: isValidJson(dataInput) ? parseJson(dataInput) : {},
-        headers: isValidJson(headersInput) ? parseJson(headersInput) : {},
+        headers,
         id: idInput || undefined,
       };
 
       const response = await apiClient.makeRequest(request);
       onResponse(response);
     } catch (error) {
+      const err = error as { code?: string | number; message?: string };
+      const status = typeof err?.code === 'number' ? err.code : 500;
       onResponse({
         data: error,
-        status: 500,
-        statusText: 'Error',
+        status,
+        statusText: err?.message || 'Error',
         headers: {},
       });
     } finally {
@@ -140,9 +171,21 @@ export function RequestBuilder({
           {/* Request Body for create, patch */}
           {['create', 'patch'].includes(selectedMethod) && (
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Request Body (JSON)
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium">
+                  Request Body (JSON)
+                </label>
+                {service.schema && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setDataInput(buildSample())}
+                  >
+                    Fill sample from schema
+                  </Button>
+                )}
+              </div>
               <textarea
                 value={dataInput}
                 onChange={e =>
@@ -153,6 +196,22 @@ export function RequestBuilder({
               />
             </div>
           )}
+
+          {/* Auth token (Bearer) */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Auth Token (Bearer)
+            </label>
+            <input
+              type="text"
+              value={authToken}
+              onChange={e =>
+                setAuthToken((e.target as HTMLInputElement).value)
+              }
+              placeholder="Paste a JWT to send as Authorization: Bearer <token>"
+              className="w-full p-2 border border-input rounded-md bg-background font-mono text-sm"
+            />
+          </div>
 
           {/* Headers */}
           <div>
