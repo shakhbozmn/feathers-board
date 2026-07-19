@@ -38,11 +38,13 @@ export function playground(options: PlaygroundOptions = {}) {
     // Koa apps expose `.callback()`; everything else is treated as Express.
     const isKoa = typeof webApp.callback === 'function';
 
-    // CORS for the playground's own endpoints (`/services` + the UI path).
-    // Scoped on purpose: we never touch CORS on the consumer's other routes.
-    if (config.cors) {
-      registerPlaygroundCors(webApp, isKoa, config.path);
-    }
+    // Response headers scoped to the playground's own routes only. Sets a
+    // relaxed CSP for the UI path (the Next.js export uses inline bootstrap
+    // scripts that a strict host CSP like helmet's `script-src 'self'` blocks,
+    // causing a white screen) and optional CORS for `/services` + the UI path.
+    // Registered after the consumer's helmet/CSP so it overrides for our routes
+    // while never touching the rest of their app.
+    registerPlaygroundHeaders(webApp, isKoa, config.path, config.cors);
 
     // Service discovery endpoint - a valid Feathers service (exposes `find`).
     app.use('/services', {
@@ -180,24 +182,41 @@ function registerKoaStatic(
   });
 }
 
-// Real response-header CORS, scoped to playground endpoints only.
-function registerPlaygroundCors(
+// Response headers for the playground's own routes: a relaxed CSP for the UI
+// (so the Next.js static export's inline scripts run under a strict host CSP)
+// and optional CORS. Scoped by path so the consumer's other routes are
+// untouched.
+function registerPlaygroundHeaders(
   webApp: any,
   isKoa: boolean,
-  mountPath: string
+  mountPath: string,
+  cors: boolean
 ): void {
-  const inScope = (p: string) =>
+  const inCorsScope = (p: string) =>
     p === '/services' || p.startsWith('/services/') || p.startsWith(mountPath);
+  const inUiScope = (p: string) => !!mountPath && p.startsWith(mountPath);
   const methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
-  const headers =
+  const allowHeaders =
     'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+  // Relaxed policy for the dev-tool UI only. `unsafe-inline`/`unsafe-eval`
+  // cover Next.js bootstrap + runtime; `connect-src *` lets it call any API.
+  const csp =
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+    "style-src 'self' 'unsafe-inline'; " +
+    "img-src 'self' data: blob:; " +
+    "font-src 'self' data:; " +
+    "connect-src 'self' *";
 
   if (isKoa) {
     webApp.use(async (ctx: any, next: any) => {
-      if (inScope(ctx.path)) {
+      if (inUiScope(ctx.path)) {
+        ctx.set('Content-Security-Policy', csp);
+      }
+      if (cors && inCorsScope(ctx.path)) {
         ctx.set('Access-Control-Allow-Origin', '*');
         ctx.set('Access-Control-Allow-Methods', methods);
-        ctx.set('Access-Control-Allow-Headers', headers);
+        ctx.set('Access-Control-Allow-Headers', allowHeaders);
         if (ctx.method === 'OPTIONS') {
           ctx.status = 204;
           return;
@@ -208,10 +227,13 @@ function registerPlaygroundCors(
   } else {
     webApp.use((req: any, res: any, next: any) => {
       const p = req.path || req.url || '';
-      if (inScope(p)) {
+      if (inUiScope(p)) {
+        res.setHeader('Content-Security-Policy', csp);
+      }
+      if (cors && inCorsScope(p)) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', methods);
-        res.setHeader('Access-Control-Allow-Headers', headers);
+        res.setHeader('Access-Control-Allow-Headers', allowHeaders);
         if (req.method === 'OPTIONS') {
           res.statusCode = 204;
           return res.end();
