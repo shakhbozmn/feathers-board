@@ -76,14 +76,14 @@ export declare const ServiceInfoSchema: z.ZodObject<{
     name: string;
     path: string;
     methods: ("find" | "get" | "create" | "patch" | "remove")[];
-    schema?: any;
     description?: string | undefined;
+    schema?: any;
 }, {
     name: string;
     path: string;
     methods: ("find" | "get" | "create" | "patch" | "remove")[];
-    schema?: any;
     description?: string | undefined;
+    schema?: any;
 }>;
 export declare const ApiRequestSchema: z.ZodObject<{
     method: z.ZodEnum<["find", "get", "create", "patch", "remove"]>;
@@ -126,8 +126,8 @@ export declare const PlaygroundConfigSchema: z.ZodObject<{
         strategies?: string[] | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    path?: string | undefined;
     description?: string | undefined;
+    path?: string | undefined;
     exposeSchemas?: boolean | undefined;
     title?: string | undefined;
     version?: string | undefined;
@@ -138,8 +138,8 @@ export declare const PlaygroundConfigSchema: z.ZodObject<{
         strategies?: string[] | undefined;
     } | undefined;
 }, {
-    path?: string | undefined;
     description?: string | undefined;
+    path?: string | undefined;
     exposeSchemas?: boolean | undefined;
     title?: string | undefined;
     version?: string | undefined;

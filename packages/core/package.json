@@ -27,9 +27,9 @@
     "url": "https://github.com/shakhbozmn/feathers-board/issues"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node ../../scripts/copy-playground-ui.cjs",
     "dev": "tsc --watch",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist playground",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts --fix",
     "test": "echo 'No tests yet'",
