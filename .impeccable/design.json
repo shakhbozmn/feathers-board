@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-20T00:00:00Z",
+  "title": "Design System: Feathers Playground",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Honey Amber",
+        "canonical": "oklch(0.65 0.146 60)",
+        "tonalRamp": [
+          "oklch(0.15 0.04 60)",
+          "oklch(0.25 0.07 60)",
+          "oklch(0.40 0.11 60)",
+          "oklch(0.55 0.14 60)",
+          "oklch(0.65 0.146 60)",
+          "oklch(0.78 0.13 60)",
+          "oklch(0.88 0.10 60)",
+          "oklch(0.95 0.06 60)"
+        ]
+      },
+      "primary-strong": {
+        "role": "primary-strong",
+        "displayName": "Burnt Amber",
+        "canonical": "oklch(0.48 0.155 60)",
+        "tonalRamp": [
+          "oklch(0.15 0.05 60)",
+          "oklch(0.25 0.08 60)",
+          "oklch(0.35 0.11 60)",
+          "oklch(0.42 0.14 60)",
+          "oklch(0.48 0.155 60)",
+          "oklch(0.60 0.14 60)",
+          "oklch(0.78 0.12 60)",
+          "oklch(0.92 0.07 60)"
+        ]
+      },
+      "accent": {
+        "role": "accent",
+        "displayName": "Aubergine",
+        "canonical": "oklch(0.32 0.10 340)",
+        "tonalRamp": [
+          "oklch(0.15 0.03 340)",
+          "oklch(0.25 0.06 340)",
+          "oklch(0.32 0.10 340)",
+          "oklch(0.45 0.10 340)",
+          "oklch(0.60 0.10 340)",
+          "oklch(0.75 0.08 340)",
+          "oklch(0.88 0.05 340)",
+          "oklch(0.96 0.02 340)"
+        ]
+      },
+      "foreground": {
+        "role": "ink",
+        "displayName": "Ink",
+        "canonical": "oklch(0.18 0.020 60)",
+        "tonalRamp": [
+          "oklch(0.10 0.01 60)",
+          "oklch(0.18 0.020 60)",
+          "oklch(0.30 0.018 60)",
+          "oklch(0.45 0.012 60)",
+          "oklch(0.62 0.010 60)",
+          "oklch(0.78 0.008 60)",
+          "oklch(0.92 0.008 60)",
+          "oklch(1 0 0)"
+        ]
+      },
+      "background": {
+        "role": "paper",
+        "displayName": "Paper",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(0.16 0.005 60)",
+          "oklch(0.20 0.005 60)",
+          "oklch(0.40 0.005 60)",
+          "oklch(0.65 0.008 60)",
+          "oklch(0.85 0.008 60)",
+          "oklch(0.92 0.008 60)",
+          "oklch(0.97 0.005 60)",
+          "oklch(1 0 0)"
+        ]
+      },
+      "destructive": {
+        "role": "semantic",
+        "displayName": "Vermillion",
+        "canonical": "oklch(0.50 0.20 25)",
+        "tonalRamp": [
+          "oklch(0.15 0.06 25)",
+          "oklch(0.25 0.10 25)",
+          "oklch(0.38 0.16 25)",
+          "oklch(0.50 0.20 25)",
+          "oklch(0.62 0.18 25)",
+          "oklch(0.78 0.13 25)",
+          "oklch(0.90 0.07 25)",
+          "oklch(0.97 0.02 25)"
+        ]
+      },
+      "success": {
+        "role": "semantic",
+        "displayName": "Pine",
+        "canonical": "oklch(0.50 0.13 145)",
+        "tonalRamp": [
+          "oklch(0.15 0.04 145)",
+          "oklch(0.25 0.07 145)",
+          "oklch(0.38 0.10 145)",
+          "oklch(0.50 0.13 145)",
+          "oklch(0.65 0.13 145)",
+          "oklch(0.80 0.10 145)",
+          "oklch(0.92 0.06 145)",
+          "oklch(0.97 0.02 145)"
+        ]
+      },
+      "warning": {
+        "role": "semantic",
+        "displayName": "Warning Amber",
+        "canonical": "oklch(0.48 0.155 60)",
+        "tonalRamp": [
+          "oklch(0.15 0.05 60)",
+          "oklch(0.25 0.08 60)",
+          "oklch(0.35 0.11 60)",
+          "oklch(0.48 0.155 60)",
+          "oklch(0.62 0.15 60)",
+          "oklch(0.78 0.13 60)",
+          "oklch(0.90 0.08 60)",
+          "oklch(0.96 0.03 60)"
+        ]
+      },
+      "info": {
+        "role": "semantic",
+        "displayName": "Slate Blue",
+        "canonical": "oklch(0.40 0.10 240)",
+        "tonalRamp": [
+          "oklch(0.15 0.03 240)",
+          "oklch(0.25 0.06 240)",
+          "oklch(0.40 0.10 240)",
+          "oklch(0.55 0.10 240)",
+          "oklch(0.70 0.08 240)",
+          "oklch(0.85 0.05 240)",
+          "oklch(0.94 0.02 240)",
+          "oklch(0.98 0.01 240)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Panel titles (Request Builder, Response, Schema). Tight tracking, semibold, sentence case."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default UI body text. 14px, regular weight, 1.5 line-height."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form field labels, button text, section labels. Medium weight, 13px."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "HTTP verbs, service paths, request bodies, response JSON, status codes, IDs. System mono stack with ligatures disabled."
+      }
+    },
+    "shadows": [
+      {
+        "name": "drawer-ambient",
+        "value": "0 4px 24px oklch(0 0 0 / 0.08)",
+        "purpose": "Mobile sidebar drawer only. The single permitted shadow in the system."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for state transitions (sidebar drawer, hover)."
+      },
+      {
+        "name": "duration-quick",
+        "value": "200ms",
+        "purpose": "Drawer open/close, focus ring transitions."
+      },
+      {
+        "name": "duration-skeleton",
+        "value": "1500ms",
+        "purpose": "Loading skeleton pulse cycle."
+      }
+    ],
+    "breakpoints": [
+      { "name": "base", "value": "0px", "purpose": "Mobile-first default. Sidebar is a drawer, content panels are tabs." },
+      { "name": "md", "value": "768px", "purpose": "Tablet and up. Sidebar becomes a persistent 320px panel, content panels split side-by-side." },
+      { "name": "lg", "value": "1024px", "purpose": "Desktop. Wider panels, max response panel capped at 60%." }
+    ],
+    "zIndexScale": {
+      "dropdown": 10,
+      "sticky": 20,
+      "modal-backdrop": 40,
+      "modal": 50,
+      "drawer": 50,
+      "toast": 60,
+      "tooltip": 70
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Filled Honey CTA — Send Request, schema-sample fill. Use for the single primary action per screen.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Send GET /messages</button>",
+      "css": ".ds-btn-primary { background: var(--primary-strong); color: var(--primary-foreground); border: 1px solid transparent; border-radius: var(--radius); padding: 0.625rem 1rem; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.25; cursor: pointer; transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover:not(:disabled) { background: var(--primary-strong-hover); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action — method picker when not active, schema-fill, etc. Hairline border on Paper.",
+      "html": "<button class=\"ds-btn-outline\" type=\"button\">GET</button>",
+      "css": ".ds-btn-outline { background: var(--background); color: var(--foreground); border: 1px solid var(--input); border-radius: var(--radius); padding: 0.625rem 1rem; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.25; cursor: pointer; transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-outline:hover:not(:disabled) { background: var(--secondary); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Tertiary action — sidebar service rows when not selected, header icon buttons.",
+      "html": "<button class=\"ds-btn-ghost\" type=\"button\">users</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: var(--foreground); border: 1px solid transparent; border-radius: var(--radius); padding: 0.625rem 1rem; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.25; cursor: pointer; transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1); text-align: left; } .ds-btn-ghost:hover:not(:disabled) { background: var(--secondary); } .ds-btn-ghost:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); }"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Form field — ID, auth token. Or textarea for JSON inputs. Hairline border, mono when JSON-shaped.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Paste a JWT — sent as Authorization: Bearer …\" />",
+      "css": ".ds-input { background: var(--background); color: var(--foreground); border: 1px solid var(--input); border-radius: var(--radius); padding: 0.5rem 0.75rem; font-family: ui-monospace, SF Mono, Menlo, Consolas, monospace; font-size: 0.8125rem; line-height: 1.5; width: 100%; transition: border-color 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-input::placeholder { color: var(--muted-foreground); } .ds-input:focus-visible { outline: none; border-color: var(--ring); box-shadow: 0 0 0 1px var(--ring); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Request Builder, Response, Schema containers. Paper bg, hairline border, no shadow.",
+      "html": "<section class=\"ds-card\"><header class=\"ds-card-header\"><h3 class=\"ds-card-title\">Response</h3></header><div class=\"ds-card-body\">…</div></section>",
+      "css": ".ds-card { background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; } .ds-card-header { display: flex; flex-direction: column; gap: 0.375rem; } .ds-card-title { margin: 0; font-family: Inter, system-ui, sans-serif; font-size: 1.25rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; } .ds-card-body { flex: 1; min-height: 0; }"
+    },
+    {
+      "name": "Method Chip",
+      "kind": "chip",
+      "refersTo": "chip-method",
+      "description": "HTTP verb badge on service row and method picker. Uppercase mono. Active state on Burnt Amber.",
+      "html": "<span class=\"ds-chip-method\">GET</span>",
+      "css": ".ds-chip-method { display: inline-block; padding: 2px 6px; background: var(--muted); color: var(--muted-foreground); border-radius: 2px; font-family: ui-monospace, SF Mono, Menlo, Consolas, monospace; font-size: 0.75rem; font-weight: 500; line-height: 1.4; letter-spacing: 0; }"
+    },
+    {
+      "name": "Status Badge (Success)",
+      "kind": "chip",
+      "refersTo": "status-badge-success",
+      "description": "HTTP status code + status text. Mono. Pine bg + Pine text. Pairs with a plain-language summary sentence below.",
+      "html": "<span class=\"ds-badge ds-badge-success\">200 OK</span>",
+      "css": ".ds-badge { display: inline-block; padding: 4px 8px; border-radius: 2px; font-family: ui-monospace, SF Mono, Menlo, Consolas, monospace; font-size: 0.75rem; font-weight: 500; line-height: 1.4; } .ds-badge-success { background: var(--success-bg); color: var(--success); }"
+    },
+    {
+      "name": "Status Badge (Danger)",
+      "kind": "chip",
+      "refersTo": "status-badge-danger",
+      "description": "HTTP 4xx/5xx. Vermillion on a soft Vermillion wash.",
+      "html": "<span class=\"ds-badge ds-badge-danger\">404 Not Found</span>",
+      "css": ".ds-badge-danger { background: oklch(from var(--destructive) l c h / 0.10); color: var(--destructive); }"
+    },
+    {
+      "name": "Sidebar Service Row (Selected)",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Selected service in the sidebar. Filled Burnt Amber bg, Bone text. Multi-line row: name + path (mono) + method chips.",
+      "html": "<button class=\"ds-svc-row ds-svc-row-selected\" type=\"button\" aria-selected=\"true\" aria-label=\"users service at /users\"><span class=\"ds-svc-name\">users</span><span class=\"ds-svc-path\">/users</span><span class=\"ds-svc-chip-row\"><span class=\"ds-chip-method ds-chip-method-on-strong\">FIND</span><span class=\"ds-chip-method ds-chip-method-on-strong\">GET</span></span></button>",
+      "css": ".ds-svc-row { display: flex; flex-direction: column; gap: 4px; width: 100%; min-height: 44px; padding: 12px; border: 1px solid transparent; border-radius: var(--radius); background: transparent; color: var(--foreground); font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; text-align: left; cursor: pointer; transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-svc-row:hover:not(.ds-svc-row-selected) { background: var(--secondary); } .ds-svc-row-selected { background: var(--primary-strong); color: var(--primary-foreground); } .ds-svc-row-selected:hover { background: var(--primary-strong-hover); } .ds-svc-row:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); } .ds-svc-name { font-weight: 500; } .ds-svc-path { font-family: ui-monospace, SF Mono, Menlo, Consolas, monospace; font-size: 0.75rem; opacity: 0.8; } .ds-svc-chip-row { display: flex; flex-wrap: wrap; gap: 4px; } .ds-chip-method-on-strong { background: oklch(from var(--primary-foreground) l c h / 0.15); color: var(--primary-foreground); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Lab Notebook",
+    "overview": "The Feathers Playground is a tool that disappears into the developer's workflow. Like a well-kept lab notebook, it earns its space by being precise, legible, and unobtrusive — the page is there to record the experiment, not to show off. Color is a marker for state, not decoration. Type is functional, with monospace reserved for the things that look right in monospace: HTTP verbs, service paths, request bodies, response JSON. The system rejects the default 2025 dev-tool look. No stock shadcn blue, no SaaS cream gradients, no Tailwind UI look-alike templates, no playful emoji empty states, no information-overload à la Postman. The chrome is quiet enough that a developer's attention stays on the request and the response — not on the tool.",
+    "keyCharacteristics": [
+      "Terminal-adjacent vocabulary: Mono for verbs, methods, paths, JSON. Sharp typographic hierarchy. Not a costume, just familiar.",
+      "Restrained palette: Pure white paper, near-black ink with a brand undertone, a single honey accent reserved for action and selection. Aubergine accents typographic moments.",
+      "Flat by default: Depth comes from hairline borders and a single surface-card layer. No shadows at rest.",
+      "Earned density: Dense where developers work (method picker, headers, body, response); spacious where they read (status badges, errors, schema).",
+      "Honest state: Real HTTP status codes, real error messages, real auth flow. No masking."
+    ],
+    "rules": [
+      { "name": "The Two Voices Rule", "body": "Honey and Aubergine are the only chromatic colors. Honey speaks for action (a button to press, a state that matters). Aubergine speaks for reference (a link to follow, a value to read). Never both at once on the same element.", "section": "colors" },
+      { "name": "The Rarity Doctrine", "body": "The Honey accent covers ≤10% of any given screen. Its scarcity is what makes it meaningful. When in doubt, leave it out — Ink on Paper is enough.", "section": "colors" },
+      { "name": "The Mono Discipline", "body": "Mono is for code-shaped text only. Body prose, labels, and titles stay in Inter. Mixing them dilutes the terminal vocabulary.", "section": "typography" },
+      { "name": "The No All-Caps Rule Except in Mono", "body": "Display and label text use sentence case. The only all-caps text in the UI is mono — HTTP verbs, method chips — because that's what all-caps means in this system.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. A shadow is a signal that the surface is floating above the page — that means it's modal, drawer, or popover. If it isn't, it doesn't have a shadow.", "section": "elevation" },
+      { "name": "The Hairline Doctrine", "body": "1px borders separate surfaces. 2px borders are reserved for active tab indicators. No thicker colored border on any element.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Honey on action elements (filled buttons, active selections, focus rings) and nowhere else. The accent's rarity is the point.",
+      "Do use Aubergine for typographic moments (links, code callouts, secondary text accents) — never alongside Honey on the same element.",
+      "Do reserve mono for code-shaped content: HTTP verbs, service paths, JSON, IDs, status codes. Use Inter for everything else.",
+      "Do pair every status badge with a plain-language summary sentence below it. Color alone never carries the meaning.",
+      "Do enforce 44×44px touch targets on coarse pointers via @media (pointer: coarse) — already wired in globals.css.",
+      "Do anchor the input border to Input and the focus ring to Ring. The focus ring replaces the browser outline, never supplements it.",
+      "Do use the dark token set for night mode — the palette is rebuilt, not inverted."
+    ],
+    "donts": [
+      "Don't use the stock shadcn blue. It is the explicit anti-reference and has no place here.",
+      "Don't use SaaS cream gradients, Notion pastel gradients, or any tinted near-white body background. The body stays pure white. Always.",
+      "Don't ship Postman-style information overload. Density is fine; chaos is not. One summary per panel, not three.",
+      "Don't use emoji as empty-state illustration. Empty states teach the next action in mono copy, not a smiling wrench.",
+      "Don't use Tailwind UI look-alike marketing templates. This is a tool, not a landing page.",
+      "Don't add a shadow to anything that isn't a modal, drawer, or popover. The flat-by-default rule is non-negotiable.",
+      "Don't use side-stripe borders (border-l / border-r greater than 1px as a colored accent). Use full hairline borders, background tints, or leading glyphs.",
+      "Don't use opacity on hover states. Use an explicit darker token. Alpha creates unpredictable contrast.",
+      "Don't gate content visibility on a class-triggered transition. Reveal animations enhance an already-visible default; they don't create it."
+    ]
+  }
+}

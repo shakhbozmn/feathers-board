@@ -8,6 +8,31 @@ interface ResponseViewerProps {
   loading: boolean;
 }
 
+type StatusTone = 'success' | 'warning' | 'danger';
+
+function toneFor(status: number): StatusTone {
+  if (status >= 200 && status < 300) return 'success';
+  if (status >= 400) return 'danger';
+  return 'warning';
+}
+
+function summarize(status: number, statusText: string): string {
+  if (status >= 200 && status < 300) return `Success — ${statusText}`;
+  if (status === 401) return 'Not authenticated. Check your token.';
+  if (status === 403) return 'Forbidden. You don’t have access.';
+  if (status === 404) return 'Not found.';
+  if (status === 422) return 'Validation failed. Check the request body.';
+  if (status >= 500) return 'Server error. Try again or check the logs.';
+  if (status >= 400) return `Request failed — ${statusText}`;
+  return statusText;
+}
+
+const toneClasses: Record<StatusTone, string> = {
+  success: 'bg-success-bg text-success',
+  warning: 'bg-warning-bg text-warning',
+  danger: 'bg-destructive/10 text-destructive',
+};
+
 export function ResponseViewer({ response, loading }: ResponseViewerProps) {
   if (loading) {
     return (
@@ -37,10 +62,9 @@ export function ResponseViewer({ response, loading }: ResponseViewerProps) {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-center h-64 text-muted-foreground">
-              <div className="text-center">
-                <div className="text-4xl mb-4">📡</div>
-                <p>Make a request to see the response</p>
-              </div>
+              <p className="font-mono text-sm text-center max-w-sm">
+                Send a request to see the response here.
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -48,41 +72,55 @@ export function ResponseViewer({ response, loading }: ResponseViewerProps) {
     );
   }
 
+  const tone = toneFor(response.status);
+  const summary = summarize(response.status, response.statusText);
+
   return (
     <div className="h-full p-4">
       <Card className="h-full">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            Response
-            <span
-              className={`px-2 py-1 text-xs rounded ${
-                response.status >= 200 && response.status < 300
-                  ? 'bg-green-100 text-green-800'
-                  : response.status >= 400
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-yellow-100 text-yellow-800'
-              }`}
-            >
-              {response.status} {response.statusText}
-            </span>
-          </CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle>Response</CardTitle>
+          <span
+            className={`px-2 py-1 text-xs rounded font-mono font-medium ${toneClasses[tone]}`}
+          >
+            {response.status} {response.statusText}
+          </span>
         </CardHeader>
         <CardContent className="h-full overflow-auto">
           <div className="space-y-4">
-            {/* Response Headers */}
+            {/* aria-live region: status + summary announced together */}
+            <div role="status" aria-live="polite" className="sr-only">
+              {response.status} {response.statusText}. {summary}
+            </div>
+
+            <p
+              className={`text-sm ${
+                tone === 'danger'
+                  ? 'text-destructive'
+                  : tone === 'warning'
+                    ? 'text-warning'
+                    : 'text-muted-foreground'
+              }`}
+            >
+              {summary}
+            </p>
+
             {response.headers && Object.keys(response.headers).length > 0 && (
               <div>
-                <h4 className="font-medium mb-2">Headers</h4>
-                <pre className="bg-muted p-3 rounded text-sm overflow-auto">
+                <h4 className="font-medium mb-2 text-sm text-muted-foreground uppercase tracking-wide">
+                  Headers
+                </h4>
+                <pre className="bg-muted p-3 rounded text-sm overflow-auto font-mono custom-scrollbar">
                   {formatJson(response.headers)}
                 </pre>
               </div>
             )}
 
-            {/* Response Body */}
             <div>
-              <h4 className="font-medium mb-2">Body</h4>
-              <pre className="bg-muted p-3 rounded text-sm overflow-auto custom-scrollbar">
+              <h4 className="font-medium mb-2 text-sm text-muted-foreground uppercase tracking-wide">
+                Body
+              </h4>
+              <pre className="bg-muted p-3 rounded text-sm overflow-auto font-mono custom-scrollbar">
                 {formatJson(response.data)}
               </pre>
             </div>

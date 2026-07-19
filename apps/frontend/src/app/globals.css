@@ -2,105 +2,173 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Brand palette: "Quiet, Sharp, Considered" — terminal-adjacent dev tool.
+ * Anchored on honey amber (oklch hue 60). Pure white surface, near-black
+ * ink with a brand undertone, semantic-first tokens. WCAG 2.2 AA.
+ */
 @layer base {
-    :root {
-        --background: 0 0% 100%;
-        --foreground: 222.2 84% 4.9%;
-        --card: 0 0% 100%;
-        --card-foreground: 222.2 84% 4.9%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 222.2 84% 4.9%;
-        --primary: 221.2 83.2% 53.3%;
-        --primary-foreground: 210 40% 98%;
-        --secondary: 210 40% 96%;
-        --secondary-foreground: 222.2 84% 4.9%;
-        --muted: 210 40% 96%;
-        --muted-foreground: 215.4 16.3% 46.9%;
-        --accent: 210 40% 96%;
-        --accent-foreground: 222.2 84% 4.9%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 214.3 31.8% 91.4%;
-        --input: 214.3 31.8% 91.4%;
-        --ring: 221.2 83.2% 53.3%;
-        --radius: 0.5rem;
-    }
+  :root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.18 0.020 60);
 
-    .dark {
-        --background: 222.2 84% 4.9%;
-        --foreground: 210 40% 98%;
-        --card: 222.2 84% 4.9%;
-        --card-foreground: 210 40% 98%;
-        --popover: 222.2 84% 4.9%;
-        --popover-foreground: 210 40% 98%;
-        --primary: 217.2 91.2% 59.8%;
-        --primary-foreground: 222.2 84% 4.9%;
-        --secondary: 217.2 32.6% 17.5%;
-        --secondary-foreground: 210 40% 98%;
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
-        --ring: 224.3 76.3% 94.1%;
-    }
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.18 0.020 60);
+
+    --popover: oklch(0.99 0.003 60);
+    --popover-foreground: oklch(0.18 0.020 60);
+
+    /* Brand accent: honey amber. Used for focus rings, active selection,
+       method chips when active, link accents. NOT for body text. */
+    --primary: oklch(0.65 0.146 60);
+    --primary-foreground: oklch(0.99 0.005 60);
+
+    /* Primary-strong: darker amber for filled CTAs. AA body pass with white text. */
+    --primary-strong: oklch(0.48 0.155 60);
+    --primary-strong-hover: oklch(0.42 0.155 60);
+
+    --secondary: oklch(0.97 0.005 60);
+    --secondary-foreground: oklch(0.25 0.015 60);
+
+    --muted: oklch(0.97 0.005 60);
+    --muted-foreground: oklch(0.45 0.012 60);
+
+    /* Aubergine accent for typographic contrast — links, code callouts. */
+    --accent: oklch(0.32 0.10 340);
+    --accent-foreground: oklch(0.97 0.005 340);
+
+    --destructive: oklch(0.50 0.20 25);
+    --destructive-foreground: oklch(0.99 0.005 25);
+
+    --border: oklch(0.90 0.008 60);
+    --input: oklch(0.90 0.008 60);
+    --ring: oklch(0.48 0.155 60);
+
+    /* Semantic state tokens (filled + soft bg + readable text). */
+    --success: oklch(0.50 0.13 145);
+    --success-foreground: oklch(0.99 0.005 145);
+    --success-bg: oklch(0.94 0.04 145);
+
+    --warning: oklch(0.48 0.155 60);
+    --warning-foreground: oklch(0.99 0.005 60);
+    --warning-bg: oklch(0.94 0.06 80);
+
+    --info: oklch(0.40 0.10 240);
+    --info-foreground: oklch(0.99 0.005 240);
+    --info-bg: oklch(0.94 0.03 240);
+
+    --radius: 0.375rem;
+  }
+
+  .dark {
+    --background: oklch(0.16 0.005 60);
+    --foreground: oklch(0.92 0.008 60);
+
+    --card: oklch(0.20 0.005 60);
+    --card-foreground: oklch(0.92 0.008 60);
+
+    --popover: oklch(0.18 0.005 60);
+    --popover-foreground: oklch(0.92 0.008 60);
+
+    --primary: oklch(0.72 0.150 60);
+    --primary-foreground: oklch(0.16 0.005 60);
+
+    --primary-strong: oklch(0.65 0.146 60);
+    --primary-strong-hover: oklch(0.70 0.146 60);
+
+    --secondary: oklch(0.22 0.008 60);
+    --secondary-foreground: oklch(0.85 0.008 60);
+
+    --muted: oklch(0.22 0.008 60);
+    --muted-foreground: oklch(0.62 0.012 60);
+
+    --accent: oklch(0.60 0.12 340);
+    --accent-foreground: oklch(0.95 0.008 340);
+
+    --destructive: oklch(0.62 0.18 25);
+    --destructive-foreground: oklch(0.99 0.005 25);
+
+    --border: oklch(0.28 0.008 60);
+    --input: oklch(0.28 0.008 60);
+    --ring: oklch(0.72 0.150 60);
+
+    --success: oklch(0.65 0.13 145);
+    --success-foreground: oklch(0.16 0.005 145);
+    --success-bg: oklch(0.25 0.05 145);
+
+    --warning: oklch(0.72 0.150 60);
+    --warning-foreground: oklch(0.16 0.005 60);
+    --warning-bg: oklch(0.25 0.08 60);
+
+    --info: oklch(0.60 0.10 240);
+    --info-foreground: oklch(0.16 0.005 240);
+    --info-bg: oklch(0.25 0.05 240);
+  }
 }
 
 @layer base {
-    * {
-        @apply border-border;
-    }
+  * {
+    @apply border-border;
+  }
 
-    body {
-        @apply bg-background text-foreground;
-    }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Terminal-adjacent: mono for verbs, methods, paths, JSON. */
+  code,
+  kbd,
+  pre,
+  samp,
+  .font-mono {
+    font-variant-ligatures: none;
+  }
 }
 
-/* Custom scrollbar styles */
+/* Token-driven scrollbar — quiet chrome. */
 .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
+  height: 6px;
 }
-
 .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-muted;
+  background: transparent;
 }
-
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/30 rounded-full;
+  background: oklch(from var(--muted-foreground) l c h / 0.25);
+  border-radius: 999px;
 }
-
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
+  background: oklch(from var(--muted-foreground) l c h / 0.45);
 }
 
-/* JSON viewer custom styles */
-.react-json-view {
-    @apply bg-card text-card-foreground rounded-md p-4;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
-.react-json-view .object-key-val {
-    @apply text-sm;
+/* Touch-first: enforce 44x44 minimum on coarse pointers (phones, tablets).
+   Fine pointers (mouse, trackpad) keep compact density. */
+@media (pointer: coarse) {
+  .h-9 {
+    min-height: 44px;
+  }
+  .h-10 {
+    min-height: 44px;
+  }
+  .h-11 {
+    min-height: 48px;
+  }
 }
 
-.react-json-view .object-key {
-    @apply text-primary font-medium;
-}
-
-.react-json-view .string-value {
-    @apply text-green-600;
-}
-
-.react-json-view .number-value {
-    @apply text-blue-600;
-}
-
-.react-json-view .boolean-value {
-    @apply text-purple-600;
-}
-
-.react-json-view .null-value {
-    @apply text-gray-500;
+/* Safe-area insets for notched devices. */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
 }

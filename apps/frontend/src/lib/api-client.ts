@@ -16,9 +16,21 @@ export class ApiClient {
   }
 
   async getServices(): Promise<ServiceInfo[]> {
-    const response = await fetch(`${this.baseUrl}/services`);
+    let response: Response;
+    try {
+      response = await fetch(`${this.baseUrl}/services`);
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : 'unknown error';
+      throw {
+        message: `Couldn’t reach the API at ${this.baseUrl}. Is the backend running? (${reason})`,
+        code: 'NETWORK_ERROR',
+      } as ApiError;
+    }
     if (!response.ok) {
-      throw new Error(`Failed to fetch services: ${response.statusText}`);
+      throw {
+        message: `API returned ${response.status} ${response.statusText} while listing services.`,
+        code: response.status,
+      } as ApiError;
     }
     return response.json() as Promise<ServiceInfo[]>;
   }
