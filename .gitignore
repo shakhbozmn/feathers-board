@@ -8,6 +8,11 @@ node_modules/
 dist/
 # But keep package dist folders for TypeScript project references
 !packages/*/dist/
+# Next.js static export
+apps/*/out/
+out/
+
+.vexp/
 
 # Turbo
 .turbo/

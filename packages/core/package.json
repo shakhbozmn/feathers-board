@@ -54,6 +54,9 @@
     },
     "koa-static": {
       "optional": true
+    },
+    "koa-mount": {
+      "optional": true
     }
   },
   "exports": {

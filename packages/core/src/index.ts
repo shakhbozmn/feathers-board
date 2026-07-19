@@ -34,15 +34,24 @@ export function playground(options: PlaygroundOptions = {}) {
   };
 
   return (app: Application) => {
-    // Service discovery endpoint - using Feathers service pattern
+    const webApp = app as any;
+    // Koa apps expose `.callback()`; everything else is treated as Express.
+    const isKoa = typeof webApp.callback === 'function';
+
+    // CORS for the playground's own endpoints (`/services` + the UI path).
+    // Scoped on purpose: we never touch CORS on the consumer's other routes.
+    if (config.cors) {
+      registerPlaygroundCors(webApp, isKoa, config.path);
+    }
+
+    // Service discovery endpoint - a valid Feathers service (exposes `find`).
     app.use('/services', {
       async find() {
-        const services = getServiceInfo(app, config.exposeSchemas);
-        return services;
+        return getServiceInfo(app, config.exposeSchemas);
       },
     });
 
-    // Serve playground UI - Next.js static files
+    // Serve playground UI - Next.js static export bundled in the package.
     if (config.path) {
       const playgroundPath = path.join(__dirname, '..', 'playground');
 
@@ -54,136 +63,12 @@ export function playground(options: PlaygroundOptions = {}) {
       }
 
       try {
-        const webApp = app as any;
-
-        // Try to detect if this is Express or Koa and configure accordingly
-        if (webApp.use && typeof webApp.use === 'function') {
-          let staticMiddleware = null;
-
-          // Try Express first
-          try {
-            if (typeof require !== 'undefined') {
-              // eslint-disable-next-line @typescript-eslint/no-require-imports
-              const express = require('@feathersjs/express');
-              if (express.serveStatic) {
-                staticMiddleware = express.serveStatic(playgroundPath, {
-                  index: 'index.html',
-                  fallthrough: false,
-                });
-              }
-            }
-          } catch (expressError) {
-            // Express not available, try Koa
-          }
-
-          // If Express static serving failed, try Koa
-          if (!staticMiddleware) {
-            try {
-              if (typeof require !== 'undefined') {
-                // eslint-disable-next-line @typescript-eslint/no-require-imports
-                const koaStatic = require('koa-static');
-                staticMiddleware = koaStatic(playgroundPath);
-              }
-            } catch (koaError) {
-              // Neither Express nor Koa static serving available
-            }
-          }
-
-          // If we have static middleware, use it
-          if (staticMiddleware) {
-            webApp.use(config.path, staticMiddleware);
-            console.log(`🎮 Feathers Playground available at ${config.path}`);
-          } else {
-            // Fallback: Use a simple custom middleware for static file serving
-            const staticHandler = (req: any, res: any, next: any) => {
-              const requestPath = req.path || req.url || '/';
-              const relativePath = requestPath.replace(config.path, '') || '/';
-              let filePath =
-                relativePath === '/' ? '/index.html' : relativePath;
-
-              const fullPath = path.join(playgroundPath, filePath);
-
-              // Security check
-              if (!fullPath.startsWith(playgroundPath)) {
-                if (next) next();
-                return;
-              }
-
-              // Serve file if it exists
-              if (fs.existsSync(fullPath)) {
-                const ext = path.extname(fullPath).toLowerCase();
-                const contentTypes: Record<string, string> = {
-                  '.html': 'text/html',
-                  '.js': 'application/javascript',
-                  '.css': 'text/css',
-                  '.json': 'application/json',
-                  '.png': 'image/png',
-                  '.jpg': 'image/jpeg',
-                  '.jpeg': 'image/jpeg',
-                  '.gif': 'image/gif',
-                  '.svg': 'image/svg+xml',
-                  '.woff': 'font/woff',
-                  '.woff2': 'font/woff2',
-                };
-
-                const contentType =
-                  contentTypes[ext] || 'application/octet-stream';
-                const isBinary = [
-                  '.png',
-                  '.jpg',
-                  '.jpeg',
-                  '.gif',
-                  '.woff',
-                  '.woff2',
-                ].includes(ext);
-
-                if (res.setHeader) {
-                  res.setHeader('Content-Type', contentType);
-                }
-
-                if (res.send) {
-                  // Express-style response
-                  const content = isBinary
-                    ? fs.readFileSync(fullPath)
-                    : fs.readFileSync(fullPath, 'utf8');
-                  res.send(content);
-                } else if (res.body !== undefined) {
-                  // Koa-style response
-                  res.body = isBinary
-                    ? fs.readFileSync(fullPath)
-                    : fs.readFileSync(fullPath, 'utf8');
-                }
-              } else if (filePath !== '/index.html') {
-                // For SPA, serve index.html for non-existent routes
-                const indexPath = path.join(playgroundPath, 'index.html');
-                if (fs.existsSync(indexPath)) {
-                  if (res.setHeader) {
-                    res.setHeader('Content-Type', 'text/html');
-                  }
-                  const indexContent = fs.readFileSync(indexPath, 'utf8');
-                  if (res.send) {
-                    res.send(indexContent);
-                  } else if (res.body !== undefined) {
-                    res.body = indexContent;
-                  }
-                } else if (next) {
-                  next();
-                }
-              } else if (next) {
-                next();
-              }
-            };
-
-            webApp.use(config.path, staticHandler);
-            console.log(
-              `🎮 Feathers Playground available at ${config.path} (using fallback static serving)`
-            );
-          }
+        if (isKoa) {
+          registerKoaStatic(webApp, config.path, playgroundPath);
         } else {
-          console.warn(
-            '🎮 Feathers Playground: Cannot serve static files - web framework not detected'
-          );
+          registerExpressStatic(webApp, config.path, playgroundPath);
         }
+        console.log(`🎮 Feathers Playground available at ${config.path}`);
       } catch (error) {
         console.error('Error setting up playground static files:', error);
         console.log(
@@ -191,27 +76,150 @@ export function playground(options: PlaygroundOptions = {}) {
         );
       }
     }
-
-    // Add CORS headers if enabled using hooks
-    if (config.cors) {
-      app.hooks({
-        before: {
-          all: [
-            (context: any) => {
-              if (context.params.provider && context.params.headers) {
-                context.params.headers['Access-Control-Allow-Origin'] = '*';
-                context.params.headers['Access-Control-Allow-Methods'] =
-                  'GET, POST, PUT, PATCH, DELETE, OPTIONS';
-                context.params.headers['Access-Control-Allow-Headers'] =
-                  'Origin, X-Requested-With, Content-Type, Accept, Authorization';
-              }
-              return context;
-            },
-          ],
-        },
-      });
-    }
   };
+}
+
+const CONTENT_TYPES: Record<string, string> = {
+  '.html': 'text/html',
+  '.js': 'application/javascript',
+  '.mjs': 'application/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.txt': 'text/plain',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+};
+
+// Resolve a request path (already stripped of the mount prefix) to a file on
+// disk, falling back to index.html for SPA client routes. Returns null when the
+// request escapes the playground directory.
+function resolveStaticFile(playgroundPath: string, relative: string): string | null {
+  let rel = relative || '/';
+  if (rel === '/' || rel === '') rel = '/index.html';
+  const fullPath = path.join(playgroundPath, rel);
+  if (!fullPath.startsWith(playgroundPath)) return null; // path traversal guard
+  if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+    return fullPath;
+  }
+  const indexPath = path.join(playgroundPath, 'index.html');
+  return fs.existsSync(indexPath) ? indexPath : null;
+}
+
+// Express: `app.use(path, middleware)` is supported natively.
+function registerExpressStatic(
+  webApp: any,
+  mountPath: string,
+  playgroundPath: string
+): void {
+  let serveStatic: any;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    serveStatic = require('@feathersjs/express').serveStatic;
+  } catch {
+    serveStatic = null;
+  }
+
+  if (serveStatic) {
+    webApp.use(
+      mountPath,
+      serveStatic(playgroundPath, { index: 'index.html', fallthrough: false })
+    );
+    return;
+  }
+
+  // Fallback: hand-rolled Express middleware (no extra deps required).
+  webApp.use(mountPath, (req: any, res: any, next: any) => {
+    const requestPath = req.path || req.url || '/';
+    const fullPath = resolveStaticFile(playgroundPath, requestPath);
+    if (!fullPath) return next ? next() : undefined;
+    res.setHeader(
+      'Content-Type',
+      CONTENT_TYPES[path.extname(fullPath).toLowerCase()] ||
+        'application/octet-stream'
+    );
+    fs.createReadStream(fullPath).pipe(res);
+  });
+}
+
+// Koa: `app.use(path, obj)` registers a Feathers *service* (that is what caused
+// the original "Invalid service object" crash). Static files must be a single
+// argument Koa middleware. Prefer koa-mount + koa-static, else hand-roll one.
+function registerKoaStatic(
+  webApp: any,
+  mountPath: string,
+  playgroundPath: string
+): void {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const serve = require('koa-static');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mount = require('koa-mount');
+    webApp.use(mount(mountPath, serve(playgroundPath, { index: 'index.html' })));
+    return;
+  } catch {
+    // koa-static / koa-mount not installed - fall through to hand-rolled.
+  }
+
+  webApp.use(async (ctx: any, next: any) => {
+    if (ctx.path !== mountPath && !ctx.path.startsWith(mountPath + '/')) {
+      return next();
+    }
+    const relative = ctx.path.slice(mountPath.length) || '/';
+    const fullPath = resolveStaticFile(playgroundPath, relative);
+    if (!fullPath) return next();
+    ctx.type =
+      CONTENT_TYPES[path.extname(fullPath).toLowerCase()] ||
+      'application/octet-stream';
+    ctx.body = fs.createReadStream(fullPath);
+  });
+}
+
+// Real response-header CORS, scoped to playground endpoints only.
+function registerPlaygroundCors(
+  webApp: any,
+  isKoa: boolean,
+  mountPath: string
+): void {
+  const inScope = (p: string) =>
+    p === '/services' || p.startsWith('/services/') || p.startsWith(mountPath);
+  const methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+  const headers =
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+
+  if (isKoa) {
+    webApp.use(async (ctx: any, next: any) => {
+      if (inScope(ctx.path)) {
+        ctx.set('Access-Control-Allow-Origin', '*');
+        ctx.set('Access-Control-Allow-Methods', methods);
+        ctx.set('Access-Control-Allow-Headers', headers);
+        if (ctx.method === 'OPTIONS') {
+          ctx.status = 204;
+          return;
+        }
+      }
+      await next();
+    });
+  } else {
+    webApp.use((req: any, res: any, next: any) => {
+      const p = req.path || req.url || '';
+      if (inScope(p)) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', methods);
+        res.setHeader('Access-Control-Allow-Headers', headers);
+        if (req.method === 'OPTIONS') {
+          res.statusCode = 204;
+          return res.end();
+        }
+      }
+      next();
+    });
+  }
 }
 
 function getServiceInfo(

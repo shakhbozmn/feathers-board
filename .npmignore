@@ -19,11 +19,17 @@ coverage/
 
 # Config files
 .eslintrc.js
+eslint.config.js
 .prettierrc
+.prettierignore
+.gitignore
 turbo.json
 pnpm-workspace.yaml
 tsconfig.json
+scripts/
 
 # Documentation (keep README and LICENSE)
 CONTRIBUTING.md
+USAGE.md
+VERSIONING.md
 project_spec.md
