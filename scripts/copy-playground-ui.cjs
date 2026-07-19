@@ -55,11 +55,31 @@ function copyDir(src, dst) {
 }
 
 if (!fs.existsSync(source)) {
-  console.error(
+  // The source is missing — typically because turbo started this task in
+  // parallel with `frontend#build` and the static export hasn't been
+  // produced yet. Self-heal: build the frontend now and continue. Exits
+  // non-zero only if the build itself fails, so genuine CI errors still
+  // surface while the "ran out of order" case stops being a hard failure.
+  console.warn(
     `[copy-playground-ui] Source not found: ${source}\n` +
-      `Build the frontend first: pnpm --filter @feathers-playground/frontend build`
+      `Building frontend first to unblock…`
   );
-  process.exit(1);
+  const { spawnSync } = require('child_process');
+  const result = spawnSync(
+    'pnpm',
+    ['--filter', '@feathers-playground/frontend', 'build'],
+    { cwd: repoRoot, stdio: 'inherit' }
+  );
+  if (result.status !== 0) {
+    console.error('[copy-playground-ui] Frontend build failed.');
+    process.exit(result.status ?? 1);
+  }
+  if (!fs.existsSync(source)) {
+    console.error(
+      `[copy-playground-ui] Frontend build did not produce ${source}.`
+    );
+    process.exit(1);
+  }
 }
 
 console.log(`[copy-playground-ui] ${path.relative(repoRoot, source)} → ${path.relative(repoRoot, dest)}`);
